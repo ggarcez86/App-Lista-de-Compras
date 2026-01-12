@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Dashboard } from './components/Dashboard';
@@ -97,10 +96,12 @@ function App() {
   }, [deleteList]);
 
   if (!loaded) return (
-    <div className="flex h-screen items-center justify-center bg-[#1e293b]">
-      <div className="animate-pulse text-center">
-        <div className="h-16 w-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-        <h1 className="text-white font-heading font-black text-xl uppercase tracking-[0.2em]">Carregando...</h1>
+    <div className="flex h-screen flex-col items-center justify-center bg-[#1e293b] p-6 text-center">
+      <div className="flex flex-col items-center w-full max-w-[500px] animate-pulse">
+        <img src="https://bioflow.online/logosemfundo.png" alt="Carregando..." className="w-full mb-12 drop-shadow-[0_25px_25px_rgba(0,0,0,0.5)]" />
+        <div className="w-64 h-1.5 bg-white/10 rounded-full overflow-hidden relative">
+            <div className="absolute inset-0 bg-accent w-1/2 rounded-full animate-[shimmer_2s_infinite_linear]"></div>
+        </div>
       </div>
     </div>
   );

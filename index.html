@@ -30,6 +30,15 @@
               accent: '#10b981',
               brand: '#1e293b',
               gold: '#d97706'
+            },
+            animation: {
+              'shimmer': 'shimmer 2s infinite linear',
+            },
+            keyframes: {
+              shimmer: {
+                '0%': { transform: 'translateX(-100%)' },
+                '100%': { transform: 'translateX(100%)' }
+              }
             }
           }
         }
@@ -63,10 +72,12 @@
 </head>
   <body class="bg-[#f8fafc] text-slate-900">
     <div id="root">
-        <div class="flex h-screen items-center justify-center p-6 text-center bg-[#1e293b]">
-            <div class="animate-pulse">
-                <div class="h-16 w-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-                <h1 class="text-white font-heading font-black text-xl uppercase tracking-[0.2em]">Garcez Heredia</h1>
+        <div class="flex h-screen flex-col items-center justify-center p-6 text-center bg-[#1e293b]">
+            <div class="flex flex-col items-center w-full max-w-[500px]">
+                <img src="https://bioflow.online/logosemfundo.png" alt="Garcez Heredia" class="w-full mb-12 animate-pulse drop-shadow-[0_25px_25px_rgba(0,0,0,0.5)]" />
+                <div class="w-64 h-1.5 bg-white/10 rounded-full overflow-hidden relative">
+                    <div class="absolute inset-0 bg-accent w-1/2 rounded-full animate-shimmer"></div>
+                </div>
             </div>
         </div>
     </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ShoppingList } from '../types';
 import { Plus, ShoppingBag, Smartphone, X, Check, Settings, Download, Upload, Database, Code, ArrowRight, Star, CloudOff, Cloud, ShieldCheck, FileSpreadsheet } from 'lucide-react';
@@ -57,114 +56,110 @@ export const Dashboard: React.FC<DashboardProps> = ({
   });
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#f8fafc] pb-20">
+    <div className="flex min-h-screen flex-col bg-[#f8fafc] pb-20 text-center">
       {/* Topo Decorativo com a Identidade da Família */}
-      <div className="bg-[#1e293b] text-white pt-10 pb-16 px-6 rounded-b-[3rem] shadow-2xl relative overflow-hidden">
+      <div className="bg-[#1e293b] text-white pt-8 pb-32 px-6 rounded-b-[5rem] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-10 -mt-10 h-64 w-64 bg-accent/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 -ml-10 -mb-10 h-48 w-48 bg-blue-500/10 rounded-full blur-3xl"></div>
         
-        <header className="relative z-10 flex justify-between items-start">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <div className="bg-white/10 p-2.5 rounded-2xl backdrop-blur-md border border-white/10">
-                <ShieldCheck size={24} className="text-accent" />
-              </div>
-              <div>
-                <h1 className="text-xl font-heading font-black tracking-tight leading-tight">
-                  Garcez Heredia
-                </h1>
-                <p className="text-[10px] font-bold text-accent uppercase tracking-[0.3em]">Compras Inteligentes</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => setShowSettings(true)} className="p-3 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 transition-all active:scale-90">
-              <Settings size={20} />
+        {/* Barra Superior de Ações */}
+        <div className="relative z-20 flex justify-between items-center mb-6">
+            <button onClick={() => setShowSettings(true)} className="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 transition-all active:scale-90 text-white/40">
+              <Settings size={24} />
             </button>
-            <button onClick={() => setShowInstallHelp(true)} className="p-3 rounded-2xl bg-accent hover:bg-emerald-400 text-white shadow-lg shadow-accent/20 transition-all active:scale-90">
-              <Smartphone size={20} />
+            <button onClick={() => setShowInstallHelp(true)} className="p-3.5 rounded-2xl bg-accent/20 hover:bg-accent/30 text-accent border border-accent/20 transition-all active:scale-90">
+              <Smartphone size={24} />
             </button>
-          </div>
+        </div>
+
+        {/* Logo Centralizado e MUITO Maior (Sem Fundo) */}
+        <header className="relative z-10 flex flex-col items-center justify-center py-4">
+            <img 
+              src="https://bioflow.online/logosemfundo.png" 
+              alt="Garcez Heredia" 
+              className="h-64 sm:h-80 w-auto object-contain transition-transform active:scale-95 cursor-pointer drop-shadow-[0_25px_30px_rgba(0,0,0,0.6)]"
+              onClick={() => window.location.reload()}
+            />
         </header>
 
-        <div className="mt-8 relative z-10 space-y-3">
+        <div className="mt-6 relative z-10 space-y-4 max-w-sm mx-auto">
            <button 
              onClick={() => setShowCreateMenu(true)} 
-             className="w-full flex items-center justify-between group rounded-2xl bg-white p-5 text-slate-900 shadow-xl active:scale-[0.98] transition-all"
+             className="w-full flex items-center justify-between group rounded-[2.5rem] bg-white p-6 text-slate-900 shadow-2xl active:scale-[0.98] transition-all"
            >
              <div className="flex items-center gap-4">
-                <div className="bg-accent/10 p-3 rounded-xl text-accent">
-                    <Plus size={24} strokeWidth={3} />
+                <div className="bg-accent/10 p-4 rounded-[1.5rem] text-accent">
+                    <Plus size={32} strokeWidth={3} />
                 </div>
-                <span className="font-heading font-black text-lg tracking-tight">Nova Lista de Compras</span>
+                <span className="font-heading font-black text-2xl tracking-tighter">Nova Lista</span>
              </div>
-             <ArrowRight size={20} className="text-slate-300 group-hover:text-accent transition-colors" />
+             <ArrowRight size={24} className="text-slate-300 group-hover:text-accent transition-colors" />
            </button>
 
            <a 
              href={MASTER_SHEET_URL}
              target="_blank"
              rel="noopener noreferrer"
-             className="w-full flex items-center justify-between group rounded-2xl bg-white/10 border border-white/10 p-4 text-white hover:bg-white/20 active:scale-[0.98] transition-all"
+             className="w-full flex items-center justify-between group rounded-[2rem] bg-white/5 border border-white/10 p-6 text-white hover:bg-white/10 active:scale-[0.98] transition-all"
            >
-             <div className="flex items-center gap-4">
-                <div className="bg-emerald-500/20 p-2.5 rounded-xl text-emerald-400">
-                    <FileSpreadsheet size={20} />
+             <div className="flex items-center gap-5 text-left">
+                <div className="bg-emerald-500/10 p-3.5 rounded-2xl text-emerald-400">
+                    <FileSpreadsheet size={28} />
                 </div>
                 <div>
-                    <span className="font-bold text-sm block leading-none">Planilha Mestra</span>
-                    <span className="text-[10px] text-white/50 uppercase font-black tracking-widest">Google Sheets</span>
+                    <span className="font-bold text-lg block leading-tight">Planilha Mestra</span>
+                    <span className="text-[11px] text-white/30 uppercase font-black tracking-widest">Google Sheets Online</span>
                 </div>
              </div>
-             <ArrowRight size={16} className="text-white/20 group-hover:text-emerald-400 transition-colors" />
+             <ArrowRight size={20} className="text-white/10 group-hover:text-emerald-400 transition-colors" />
            </a>
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-md px-6 -mt-8 relative z-20 space-y-6">
-        <div className="space-y-4">
-          <div className="flex justify-between items-center px-2">
-            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                Coleções Ativas
-                <span className="h-1 w-1 rounded-full bg-slate-300"></span>
-                {lists.length}
+      <div className="mx-auto w-full max-w-md px-6 -mt-16 relative z-20 space-y-12">
+        <div className="space-y-6">
+          <div className="flex justify-center items-center">
+            <h2 className="text-[12px] font-black text-slate-400 uppercase tracking-[0.5em] flex items-center gap-6">
+                <span className="h-1 w-10 rounded-full bg-slate-200"></span>
+                Suas Listas
+                <span className="h-1 w-10 rounded-full bg-slate-200"></span>
             </h2>
           </div>
           
-          <div className="grid gap-4">
+          <div className="grid gap-6">
               {sortedLists.map((list) => {
                   const isFixed = list.id === FIXED_LIST_ID;
                   const isLocal = !!list.syncDisabled;
                   return (
                     <div 
                         key={list.id} 
-                        className={`bg-white rounded-[2rem] border-2 shadow-sm overflow-hidden active:scale-[0.97] transition-all hover:shadow-lg cursor-pointer group ${isFixed ? 'border-amber-200 bg-amber-50/10' : 'border-transparent'}`} 
+                        className={`bg-white rounded-[3rem] border-2 shadow-sm overflow-hidden active:scale-[0.97] transition-all hover:shadow-2xl cursor-pointer group ${isFixed ? 'border-amber-200 bg-amber-50/40' : 'border-transparent'}`} 
                         onClick={() => onSelectList(list.id)}
                     >
-                        <div className="p-6 flex justify-between items-center">
+                        <div className="p-8 flex justify-between items-center text-left">
                             <div className="overflow-hidden pr-4 flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <h3 className={`font-heading font-black truncate text-lg transition-colors ${isFixed ? 'text-amber-900' : 'text-slate-800 group-hover:text-accent'}`}>
+                                <div className="flex items-center gap-4 mb-3">
+                                    <h3 className={`font-heading font-black truncate text-2xl transition-colors ${isFixed ? 'text-amber-900' : 'text-slate-800 group-hover:text-accent'}`}>
                                         {list.name}
                                     </h3>
                                     {isFixed && (
-                                        <span className="bg-amber-500 text-[8px] text-white px-2 py-0.5 rounded-md font-black uppercase tracking-widest flex items-center gap-1">
-                                            <Star size={8} fill="white" /> FIXA
+                                        <span className="bg-amber-500 text-[10px] text-white px-3 py-1.5 rounded-lg font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0 shadow-sm shadow-amber-200">
+                                            <Star size={12} fill="white" /> FIXA
                                         </span>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <p className={`text-[11px] font-bold uppercase tracking-tight ${isFixed ? 'text-amber-600' : isLocal ? 'text-slate-400' : 'text-blue-500'}`}>
+                                <div className="flex items-center gap-5">
+                                    <p className={`text-sm font-bold uppercase tracking-tight ${isFixed ? 'text-amber-600' : isLocal ? 'text-slate-400' : 'text-blue-500'}`}>
                                         {list.items.length} itens
                                     </p>
-                                    <div className="h-1 w-1 rounded-full bg-slate-200" />
-                                    <p className="text-[10px] font-semibold text-slate-300 uppercase tracking-tighter">
-                                        {isFixed ? 'Base Mensal' : isLocal ? 'Modo Local' : 'Nuvem Ativa'}
+                                    <div className="h-2 w-2 rounded-full bg-slate-200" />
+                                    <p className="text-[12px] font-bold text-slate-300 uppercase tracking-tighter">
+                                        {isFixed ? 'Residencial Mensal' : isLocal ? 'Modo Local' : 'Nuvem Ativa'}
                                     </p>
                                 </div>
                             </div>
-                            <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-sm ${isFixed ? 'bg-amber-500 text-white shadow-amber-200' : isLocal ? 'bg-slate-100 text-slate-400 border border-slate-200' : 'bg-slate-50 text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white group-hover:border-accent'}`}>
-                                {isLocal ? <CloudOff size={20} /> : (isFixed ? <Check size={22} strokeWidth={4} /> : <ShoppingBag size={20} />)}
+                            <div className={`h-20 w-20 rounded-[1.8rem] flex items-center justify-center transition-all shadow-md ${isFixed ? 'bg-amber-500 text-white shadow-amber-200' : isLocal ? 'bg-slate-100 text-slate-400 border border-slate-200' : 'bg-slate-50 text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white group-hover:border-accent'}`}>
+                                {isLocal ? <CloudOff size={34} /> : (isFixed ? <Check size={42} strokeWidth={4} /> : <ShoppingBag size={34} />)}
                             </div>
                         </div>
                     </div>
@@ -174,8 +169,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Footer com crédito discreto */}
-        <footer className="pt-10 pb-6 text-center">
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
+        <footer className="pt-16 pb-12">
+            <p className="text-[12px] font-black text-slate-300 uppercase tracking-[0.6em]">
                 Sistema Residencial v2.5
             </p>
         </footer>
@@ -187,9 +182,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <button onClick={() => setShowSettings(false)} className="absolute top-8 right-8 text-slate-300 hover:text-slate-500 transition-colors">
                     <X size={28} />
                 </button>
-                <h2 className="text-2xl font-heading font-black text-slate-900 mb-8 tracking-tight">Preferências</h2>
+                <h2 className="text-2xl font-heading font-black text-slate-900 mb-8 tracking-tight text-left">Preferências</h2>
                 
-                <div className="space-y-8">
+                <div className="space-y-8 text-left">
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-[11px] text-blue-600 font-black uppercase tracking-widest">
@@ -221,10 +216,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       )}
 
       {showInstallHelp && (
-        <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center bg-slate-900/80 p-0 sm:p-4 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center bg-slate-900/80 p-0 sm:p-4 backdrop-blur-sm animate-fade-in text-center">
             <div className="w-full max-w-sm rounded-t-[3rem] sm:rounded-3xl bg-white p-10 shadow-2xl relative">
                 <button onClick={() => setShowInstallHelp(false)} className="absolute top-10 right-10 text-slate-300"><X size={28} /></button>
-                <div className="flex flex-col items-center text-center">
+                <div className="flex flex-col items-center">
                     <div className="bg-slate-50 p-5 rounded-3xl text-slate-900 mb-6 border border-slate-100"><Smartphone size={40} /></div>
                     <h2 className="text-2xl font-heading font-black text-slate-900 mb-6">Salvar no Início</h2>
                     <p className="text-sm text-slate-600 font-medium text-left space-y-4">
@@ -239,11 +234,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
       )}
 
       {showCreateMenu && (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/80 p-4 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/80 p-4 backdrop-blur-sm animate-fade-in text-center">
             <div className="w-full max-w-sm rounded-[3rem] bg-white p-10 shadow-2xl animate-slide-up relative">
                 <button onClick={() => setShowCreateMenu(false)} className="absolute top-8 right-8 text-slate-300"><X size={24} /></button>
                 {!isNamingList ? (
-                    <div className="space-y-4">
+                    <div className="space-y-4 text-left">
                         <h2 className="mb-8 text-2xl font-heading font-black text-slate-900 tracking-tight text-center">Configurar Lista</h2>
                         <button onClick={() => setIsNamingList(true)} className="flex w-full items-center gap-5 rounded-3xl border-2 p-6 active:bg-slate-50 transition-all border-slate-100">
                             <div className="bg-slate-100 p-3 rounded-2xl text-slate-900"><Plus size={24} /></div>
@@ -255,7 +250,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         </button>
                     </div>
                 ) : (
-                    <form onSubmit={handleConfirmCreate} className="space-y-6">
+                    <form onSubmit={handleConfirmCreate} className="space-y-6 text-left">
                         <h2 className="text-2xl font-heading font-black text-center text-slate-900">Novo Catálogo</h2>
                         <div className="space-y-4">
                             <div className="space-y-1">
@@ -268,7 +263,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                     <div className={`p-2 rounded-lg ${syncEnabled ? 'bg-blue-100 text-blue-600' : 'bg-slate-200 text-slate-400'}`}>
                                         {syncEnabled ? <Cloud size={18} /> : <CloudOff size={18} />}
                                     </div>
-                                    <div>
+                                    <div className="text-left">
                                         <p className="text-xs font-black text-slate-700">Backup em Nuvem</p>
                                         <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Sincronia Automática</p>
                                     </div>
