@@ -172,7 +172,7 @@ function processarDados(payload) {
                 Lembrete de Atualização:
             </h3>
             <p className="text-xs text-amber-800 font-medium leading-relaxed">
-                Para o novo script funcionar, você deve ir no Google Apps Script, colar este código sobre o antigo e clicar em <b>"Implantar &gt; Gerenciar Implantações"</b>, editar a atual e selecionar <b>"Nova Versão"</b>. Caso contrário, ele continuará usando o script antigo.
+                Para o novo script funcionar, você deve ir no Google Apps Script, colar este código sobre o antigo e clicar em <b>"Implantar {" > "} Gerenciar Implantações"</b>, editar a atual e selecionar <b>"Nova Versão"</b>. Caso contrário, ele continuará usando o script antigo.
             </p>
           </section>
         </div>
