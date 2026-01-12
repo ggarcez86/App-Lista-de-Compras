@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Copy, Check, Code, Info, Zap, Play, FileCode } from 'lucide-react';
 
@@ -121,7 +120,7 @@ function processarDados(payload) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md animate-fade-in">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md animate-fade-in text-left">
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-6 border-b flex justify-between items-center bg-emerald-600 text-white shadow-lg">
           <div className="flex items-center gap-3">
@@ -173,14 +172,14 @@ function processarDados(payload) {
                 Lembrete de Atualização:
             </h3>
             <p className="text-xs text-amber-800 font-medium leading-relaxed">
-                Para o novo script funcionar, você deve ir no Google Apps Script, colar este código sobre o antigo e clicar em <b>"Implantar > Gerenciar Implantações"</b>, editar a atual e selecionar <b>"Nova Versão"</b>. Caso contrário, ele continuará usando o script antigo.
+                Para o novo script funcionar, você deve ir no Google Apps Script, colar este código sobre o antigo e clicar em <b>"Implantar &gt; Gerenciar Implantações"</b>, editar a atual e selecionar <b>"Nova Versão"</b>. Caso contrário, ele continuará usando o script antigo.
             </p>
           </section>
         </div>
 
         <div className="p-6 border-t bg-gray-50">
           <button onClick={onClose} className="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold shadow-lg text-sm">
-            Entendi, Script Atualizado!
+            Entendido, Script Atualizado!
           </button>
         </div>
       </div>
