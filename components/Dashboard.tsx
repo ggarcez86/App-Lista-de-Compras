@@ -116,7 +116,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-xl px-6 -mt-16 relative z-20 space-y-12">
+      <div className="mx-auto w-full max-w-2xl px-6 -mt-16 relative z-20 space-y-12">
         <div className="space-y-8">
           <div className="flex justify-center items-center">
             <h2 className="text-[14px] font-black text-slate-400 uppercase tracking-[0.6em] flex items-center gap-6">
@@ -136,14 +136,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         className={`bg-white rounded-[3.5rem] border-2 shadow-sm overflow-hidden active:scale-[0.97] transition-all hover:shadow-2xl cursor-pointer group ${isFixed ? 'border-amber-200 bg-amber-50/50' : 'border-transparent'}`} 
                         onClick={() => onSelectList(list.id)}
                     >
-                        <div className="px-6 py-9 sm:px-10 flex justify-between items-center text-left">
-                            <div className="overflow-hidden pr-4 flex-1">
-                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-3">
-                                    <h3 className={`font-heading font-black text-2xl sm:text-3xl tracking-tight transition-colors ${isFixed ? 'text-amber-900' : 'text-slate-800 group-hover:text-accent'}`}>
+                        <div className="px-6 py-9 sm:px-10 flex justify-between items-center text-left gap-4">
+                            <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-3">
+                                    <h3 className={`font-heading font-black text-2xl sm:text-3xl tracking-tight transition-colors leading-tight ${isFixed ? 'text-amber-900' : 'text-slate-800 group-hover:text-accent'}`}>
                                         {list.name}
                                     </h3>
                                     {isFixed && (
-                                        <span className="bg-amber-500 text-[10px] text-white px-3.5 py-2 rounded-xl font-black uppercase tracking-widest flex items-center gap-2 shrink-0 shadow-lg shadow-amber-100">
+                                        <span className="bg-amber-500 text-[9px] sm:text-[10px] text-white px-3 py-1.5 rounded-xl font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0 shadow-lg shadow-amber-100">
                                             <Star size={12} fill="white" /> FIXA
                                         </span>
                                     )}
@@ -152,14 +152,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                     <p className={`text-sm sm:text-base font-bold uppercase tracking-tight ${isFixed ? 'text-amber-600' : isLocal ? 'text-slate-400' : 'text-blue-500'}`}>
                                         {list.items.length} itens
                                     </p>
-                                    <div className="h-2.5 w-2.5 rounded-full bg-slate-200" />
-                                    <p className="text-[12px] sm:text-[13px] font-bold text-slate-300 uppercase tracking-tighter">
+                                    <div className="h-2 w-2 rounded-full bg-slate-200" />
+                                    <p className="text-[11px] sm:text-[12px] font-bold text-slate-300 uppercase tracking-tighter">
                                         {isFixed ? 'Residencial Mensal' : isLocal ? 'Modo Local' : 'Nuvem Ativa'}
                                     </p>
                                 </div>
                             </div>
-                            <div className={`h-20 w-20 sm:h-24 sm:w-24 rounded-[2.2rem] flex items-center justify-center transition-all shadow-md shrink-0 ${isFixed ? 'bg-amber-500 text-white shadow-amber-200' : isLocal ? 'bg-slate-100 text-slate-400 border border-slate-200' : 'bg-slate-50 text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white group-hover:border-accent'}`}>
-                                {isLocal ? <CloudOff size={34} /> : (isFixed ? <Check size={44} strokeWidth={4} /> : <ShoppingBag size={34} />)}
+                            <div className={`h-16 w-16 sm:h-24 sm:w-24 rounded-[2.2rem] flex items-center justify-center transition-all shadow-md shrink-0 ${isFixed ? 'bg-amber-500 text-white shadow-amber-200' : isLocal ? 'bg-slate-100 text-slate-400 border border-slate-200' : 'bg-slate-50 text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white group-hover:border-accent'}`}>
+                                {isLocal ? <CloudOff size={30} /> : (isFixed ? <Check size={40} strokeWidth={4} /> : <ShoppingBag size={30} />)}
                             </div>
                         </div>
                     </div>
@@ -175,7 +175,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </p>
         </footer>
       </div>
-      {/* ... (restante do componente Dashboard permanece igual) ... */}
+
       {showSettings && (
         <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center bg-slate-900/80 p-0 sm:p-4 backdrop-blur-sm animate-fade-in overflow-y-auto">
             <div className="w-full max-w-sm rounded-t-[3rem] sm:rounded-3xl bg-white p-8 shadow-2xl relative my-auto border-t sm:border border-slate-100">
