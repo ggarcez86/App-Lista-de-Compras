@@ -1,0 +1,21 @@
+
+{
+  "id": "br.com.garcezheredia.compras.v1",
+  "name": "Família Garcez Heredia - Compras",
+  "short_name": "Garcez Heredia",
+  "description": "App de Compras Inteligente da Família Garcez Heredia.",
+  "start_url": "./index.html?showPreview=true",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1e293b",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1162/1162499.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

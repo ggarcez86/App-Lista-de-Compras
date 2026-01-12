@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#1e293b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Garcez Heredia" />
+    
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1162/1162499.png" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <title>App de Compras Inteligente - Família Garcez Heredia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              heading: ['Montserrat', 'sans-serif'],
+            },
+            colors: { 
+              primary: '#1e293b',
+              accent: '#10b981',
+              brand: '#1e293b',
+              gold: '#d97706'
+            }
+          }
+        }
+      }
+    </script>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "uuid": "https://aistudiocdn.com/uuid@^13.0.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .font-heading {
+        font-family: 'Montserrat', sans-serif;
+      }
+      /* Previne zoom em inputs no iOS */
+      input[type="text"], input[type="number"], textarea {
+        font-size: 16px !important;
+      }
+    </style>
+  </head>
+  <body class="bg-[#f8fafc] text-slate-900">
+    <div id="root">
+        <div class="flex h-screen items-center justify-center p-6 text-center bg-[#1e293b]">
+            <div class="animate-pulse">
+                <div class="h-16 w-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                <h1 class="text-white font-heading font-black text-xl uppercase tracking-[0.2em]">Garcez Heredia</h1>
+            </div>
+        </div>
+    </div>
+  </body>
+</html>
