@@ -5,9 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#1e293b" />
-    
-    <!-- PWA Meta Tags Atualizadas -->
-    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Garcez Heredia" />
@@ -19,7 +16,39 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
 
-    <title>Garcez Heredia - Compras Inteligentes</title>
+    <title>App de Compras Inteligente - Família Garcez Heredia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              heading: ['Montserrat', 'sans-serif'],
+            },
+            colors: { 
+              primary: '#1e293b',
+              accent: '#10b981',
+              brand: '#1e293b',
+              gold: '#d97706'
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .font-heading {
+        font-family: 'Montserrat', sans-serif;
+      }
+      /* Previne zoom em inputs no iOS */
+      input[type="text"], input[type="number"], textarea {
+        font-size: 16px !important;
+      }
+    </style>
   <script type="importmap">
 {
   "imports": {
@@ -37,8 +66,8 @@
     <div id="root">
         <div class="flex h-screen items-center justify-center p-6 text-center bg-[#1e293b]">
             <div class="animate-pulse">
-                <div class="h-16 w-16 border-4 border-[#10b981] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-                <h1 class="text-white font-black text-xl uppercase tracking-[0.2em]" style="font-family: 'Montserrat', sans-serif;">Garcez Heredia</h1>
+                <div class="h-16 w-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                <h1 class="text-white font-heading font-black text-xl uppercase tracking-[0.2em]">Garcez Heredia</h1>
             </div>
         </div>
     </div>
