@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Dashboard } from './components/Dashboard';
 import { ListView } from './components/ListView';
@@ -18,13 +17,13 @@ function App() {
     }
 
     return {
-        id: uuidv4(),
+        id: crypto.randomUUID(),
         name: `${data.n || 'Lista Compartilhada'} (Cópia)`,
         createdAt: Date.now(),
         updatedAt: Date.now(),
         syncDisabled: data.sd || false,
         items: (data.i || []).map((item: any[]) => ({
-            id: uuidv4(),
+            id: crypto.randomUUID(),
             description: item[0],
             quantity: item[1] || 1,
             unit: item[2] || 'un',
@@ -66,7 +65,7 @@ function App() {
 
   const handleCreateList = (name: string, syncDisabled: boolean) => {
     const newList: ShoppingList = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       name,
       items: [],
       createdAt: Date.now(),
@@ -78,10 +77,8 @@ function App() {
   };
 
   const handleImport = (items: ShoppingItem[], name: string) => {
-    // Para importação via texto, podemos perguntar ou assumir local-only por segurança
-    // Mas por padrão, seguiremos a configuração global do app (Sheets) se houver URL.
     const newList: ShoppingList = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       name,
       items,
       createdAt: Date.now(),
@@ -100,10 +97,10 @@ function App() {
   }, [deleteList]);
 
   if (!loaded) return (
-    <div className="flex h-screen items-center justify-center bg-gray-50">
-      <div className="flex flex-col items-center gap-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-        <div className="text-primary font-bold">Carregando listas...</div>
+    <div className="flex h-screen items-center justify-center bg-[#1e293b]">
+      <div className="animate-pulse text-center">
+        <div className="h-16 w-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+        <h1 className="text-white font-heading font-black text-xl uppercase tracking-[0.2em]">Carregando...</h1>
       </div>
     </div>
   );

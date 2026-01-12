@@ -1,8 +1,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ShoppingList, ShoppingItem, SortOption } from '../types';
-import { ArrowLeft, Trash2, Plus, MoreVertical, Check, RefreshCw, ShoppingBag, Users, FileText, Upload, Download, Edit3, Type, Eraser, CloudOff, ShieldCheck } from 'lucide-react';
-import { v4 as uuidv4 } from 'uuid';
+import { ArrowLeft, Trash2, Plus, MoreVertical, Check, FileText, Upload, Download, Type, Eraser, Users, ShoppingBag } from 'lucide-react';
 import { parseItemText } from '../utils/parser';
 import { ShareModal } from './ShareModal';
 import { ImportModal } from './ImportModal';
@@ -140,7 +139,7 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
     if (!newItemText.trim()) return;
     const parsed = parseItemText(newItemText);
     const newItem: ShoppingItem = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       description: parsed.description || newItemText,
       quantity: parsed.quantity || 1,
       unit: parsed.unit || 'un',
@@ -158,88 +157,33 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
       try {
         const content = e.target?.result as string;
         const importedData = JSON.parse(content);
-        
         let rawItems: any[] = [];
         
-        // Função auxiliar para validar se um objeto parece ser um item de compra
-        const isItem = (obj: any) => obj && (obj.description || obj.item || obj.n || obj.desc) && !obj.items;
-
-        // Lógica de Detecção Robusta
         if (Array.isArray(importedData)) {
-            // Pode ser um array de itens OU um array de listas (Backup)
-            if (importedData.length > 0) {
-                if (importedData[0].items && Array.isArray(importedData[0].items)) {
-                    // É um BACKUP (Array de listas) -> Pega itens de todas as listas
-                    importedData.forEach(listObj => {
-                        if (listObj.items) rawItems = [...rawItems, ...listObj.items];
-                    });
-                } else {
-                    // É um array de itens simples
-                    rawItems = importedData;
-                }
-            }
-        } else if (importedData.items && Array.isArray(importedData.items)) {
-            // É um objeto de Lista Única
-            rawItems = importedData.items;
-        } else if (importedData.i && Array.isArray(importedData.i)) {
-            // Formato compactado
-            rawItems = importedData.i.map((row: any[]) => ({
-                description: row[0], quantity: row[1], unit: row[2], completed: row[3], note: row[4], price: row[5], brand: row[6]
-            }));
-        } else if (isItem(importedData)) {
-            // Objeto de item único
-            rawItems = [importedData];
-        }
+            if (importedData.length > 0 && importedData[0].items) {
+                importedData.forEach(listObj => { if (listObj.items) rawItems = [...rawItems, ...listObj.items]; });
+            } else { rawItems = importedData; }
+        } else if (importedData.items) { rawItems = importedData.items; }
 
         if (rawItems.length > 0) {
-            const mapped = rawItems.map((i: any) => {
-                // Se o "item" for na verdade um objeto de lista que escapou da detecção, ignora
-                if (i.items && Array.isArray(i.items)) return null;
+            const mapped = rawItems.map((i: any) => ({
+                id: crypto.randomUUID(),
+                description: String(i.description || i.item || i.n || "Item").trim(),
+                quantity: parseFloat(i.quantity || i.q || 1),
+                unit: String(i.unit || i.u || 'un').trim(),
+                price: parseFloat(i.price || i.p || 0),
+                completed: !!(i.completed || i.c || i.ok),
+                brand: String(i.brand || i.b || '').trim(),
+                note: String(i.note || i.obs || '').trim()
+            })).filter(i => i.description);
 
-                const desc = i.description || i.item || i.desc || i.n || i.name;
-                if (!desc || typeof desc !== 'string') return null;
-
-                return {
-                    id: uuidv4(),
-                    description: String(desc).trim(),
-                    quantity: parseFloat(i.quantity || i.q || 1),
-                    unit: String(i.unit || i.u || 'un').trim(),
-                    price: parseFloat(i.price || i.p || 0),
-                    completed: !!(i.completed || i.c || i.ok),
-                    brand: String(i.brand || i.b || '').trim(),
-                    note: String(i.note || i.obs || '').trim()
-                };
-            }).filter(Boolean) as ShoppingItem[];
-
-            if (mapped.length > 0) {
-                handleAction([...list.items, ...mapped]);
-                setIsMenuOpen(false);
-                alert(`${mapped.length} produtos adicionados à lista "${list.name}"!`);
-            } else {
-                alert("Nenhum produto válido encontrado no arquivo.");
-            }
-        } else {
-            alert("Não foi possível encontrar itens neste arquivo JSON.");
+            handleAction([...list.items, ...mapped]);
+            setIsMenuOpen(false);
+            alert(`${mapped.length} produtos adicionados!`);
         }
-      } catch (err) { 
-        console.error(err);
-        alert("Erro ao processar arquivo JSON."); 
-      }
+      } catch (err) { alert("Erro ao processar JSON."); }
     };
     reader.readAsText(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  const handleExportThisList = () => {
-    const dataStr = JSON.stringify(list, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${list.name.replace(/\s+/g, '_')}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-    setIsMenuOpen(false);
   };
 
   const sortedItems = useMemo(() => {
@@ -255,50 +199,29 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
       <header className={`sticky top-0 z-40 shadow-sm border-b-2 bg-white ${isFixed ? 'border-amber-200' : 'border-slate-100'}`}>
         <div className="flex items-center justify-between p-4 px-6">
           <div className="flex items-center gap-4 overflow-hidden">
-            <button onClick={onBack} className="rounded-2xl p-2.5 bg-slate-50 text-slate-500 hover:bg-slate-100 transition-all active:scale-90">
-              <ArrowLeft size={20} />
-            </button>
+            <button onClick={onBack} className="rounded-2xl p-2.5 bg-slate-50 text-slate-500 hover:bg-slate-100 transition-all active:scale-90"><ArrowLeft size={20} /></button>
             <div className="overflow-hidden">
               <h1 className="text-lg font-heading font-black text-slate-900 truncate pr-2 flex items-center gap-2">
                 {list.name}
                 <div className={`h-2.5 w-2.5 rounded-full shrink-0 shadow-sm border-2 border-white ${syncDisabled ? 'bg-slate-300' : (lastPushStatus === 'syncing' || isSyncing ? 'bg-blue-500 animate-pulse' : lastPushStatus === 'error' ? 'bg-red-500' : 'bg-accent')}`} />
               </h1>
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                {syncDisabled ? 'Lista Privada' : (isSyncing ? 'Atualizando...' : 'Sincronizada')} {isFixed ? '• Mensal' : ''}
-              </span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{syncDisabled ? 'Lista Privada' : 'Sincronizada'}</span>
             </div>
           </div>
-          <div className="flex gap-1 shrink-0">
-             {!syncDisabled && <button onClick={() => setShowShareModal(true)} className="rounded-2xl p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all"><Users size={20} /></button>}
+          <div className="flex gap-1">
              <div className="relative" ref={menuRef}>
-                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`rounded-2xl p-2.5 transition-all ${isMenuOpen ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><MoreVertical size={20} /></button>
+                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`rounded-2xl p-2.5 transition-all ${isMenuOpen ? 'bg-slate-900 text-white' : 'text-slate-400 hover:bg-slate-50'}`}><MoreVertical size={20} /></button>
                 {isMenuOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-64 rounded-3xl bg-white p-3 shadow-2xl border z-[100] animate-fade-in border-slate-100 divide-y divide-slate-50">
+                  <div className="absolute right-0 top-full mt-3 w-64 rounded-3xl bg-white p-3 shadow-2xl border z-[100] border-slate-100 divide-y divide-slate-50 animate-fade-in">
                       <div className="py-2">
-                          <button onClick={() => { const newName = prompt('Novo apelido da lista:', list.name); if (newName) { onUpdate({ ...list, name: newName.trim(), updatedAt: Date.now() }); } setIsMenuOpen(false); }} className="w-full text-left px-4 py-3 text-sm text-slate-700 font-bold hover:bg-slate-50 flex items-center gap-3 rounded-xl">
-                              <Type size={16} className="text-slate-400" /> Renomear Lista
-                          </button>
+                          <button onClick={() => { setShowTextImportModal(true); setIsMenuOpen(false); }} className="w-full text-left px-4 py-3 text-sm text-accent font-black hover:bg-emerald-50 flex items-center gap-3 rounded-xl"><FileText size={16} /> Importar WhatsApp</button>
+                          <button onClick={() => fileInputRef.current?.click()} className="w-full text-left px-4 py-3 text-sm text-blue-600 font-bold hover:bg-blue-50 flex items-center gap-3 rounded-xl"><Upload size={16} /> Mesclar JSON</button>
                       </div>
                       <div className="py-2">
-                          <button onClick={() => { setShowTextImportModal(true); setIsMenuOpen(false); }} className="w-full text-left px-4 py-3 text-sm text-accent font-black hover:bg-emerald-50 flex items-center gap-3 rounded-xl">
-                              <FileText size={16} /> Importar WhatsApp
-                          </button>
-                          <button onClick={() => fileInputRef.current?.click()} className="w-full text-left px-4 py-3 text-sm text-blue-600 font-bold hover:bg-blue-50 flex items-center gap-3 rounded-xl">
-                              <Upload size={16} /> Mesclar JSON
-                          </button>
-                      </div>
-                      <div className="py-2">
-                          <button onClick={handleExportThisList} className="w-full text-left px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-3 rounded-xl">
-                              <Download size={16} className="text-slate-400" /> Exportar JSON
-                          </button>
                           {isFixed ? (
-                            <button onClick={() => { if(confirm("Deseja resetar os itens da lista mensal?")) { handleAction([]); } setIsMenuOpen(false); }} className="w-full text-left px-4 py-3 text-sm text-amber-600 font-black hover:bg-amber-50 rounded-xl transition-colors flex items-center gap-3">
-                                <Eraser size={16} /> Resetar Itens Fixos
-                            </button>
+                            <button onClick={() => { if(confirm("Resetar itens?")) { handleAction([]); } setIsMenuOpen(false); }} className="w-full text-left px-4 py-3 text-sm text-amber-600 font-black hover:bg-amber-50 rounded-xl flex items-center gap-3"><Eraser size={16} /> Resetar Mensal</button>
                           ) : (
-                            <button onClick={() => { if(confirm("Excluir lista permanentemente?")) { setIsMenuOpen(false); setTimeout(onDeleteList, 100); } }} className="w-full text-left px-4 py-3 text-sm text-red-600 font-black hover:bg-red-50 rounded-xl transition-colors flex items-center gap-3">
-                                <Trash2 size={16} /> Excluir Coleção
-                            </button>
+                            <button onClick={() => { if(confirm("Excluir?")) { onDeleteList(); } }} className="w-full text-left px-4 py-3 text-sm text-red-600 font-black hover:bg-red-50 rounded-xl flex items-center gap-3"><Trash2 size={16} /> Excluir Coleção</button>
                           )}
                       </div>
                   </div>
@@ -307,60 +230,36 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
           </div>
         </div>
         <input type="file" ref={fileInputRef} onChange={handleImportJSON} accept=".json" className="hidden" />
-        <div className="h-2 w-full bg-slate-50 overflow-hidden">
+        <div className="h-1.5 w-full bg-slate-50 overflow-hidden">
           <div className="h-full bg-accent transition-all duration-1000 ease-out" style={{ width: `${progress}%` }} />
         </div>
       </header>
 
       <main className="flex-1 overflow-y-auto p-5 pb-36">
         {list.items.length === 0 ? (
-          <div className="flex h-full flex-col items-center justify-center text-center p-10">
-            <div className="p-10 rounded-[3rem] bg-white shadow-xl shadow-slate-200/50 mb-8 border border-slate-50">
-                <ShoppingBag size={80} strokeWidth={1} className="text-slate-200" />
-            </div>
-            <h3 className="font-heading font-black text-slate-800 text-xl tracking-tight">Começar Lista</h3>
-            <p className="text-sm text-slate-400 mt-3 max-w-[240px] leading-relaxed">Sua coleção está vazia. Adicione itens ou use a importação automática.</p>
+          <div className="flex h-full flex-col items-center justify-center text-center p-10 opacity-40">
+            <ShoppingBag size={60} className="mb-4" />
+            <h3 className="font-heading font-black text-slate-800">Sua lista está vazia</h3>
           </div>
         ) : (
           <ul className="space-y-4">
             {sortedItems.map((item) => (
-              <li key={item.id} className={`flex flex-col gap-2 rounded-[2rem] border-2 bg-white p-5 shadow-sm transition-all duration-300 ${item.completed ? 'bg-slate-50 border-slate-100 opacity-60 scale-[0.98]' : 'border-white shadow-md'}`}>
+              <li key={item.id} className={`flex flex-col gap-2 rounded-[2rem] border-2 bg-white p-5 shadow-sm transition-all ${item.completed ? 'bg-slate-50 border-slate-100 opacity-60 scale-[0.98]' : 'border-white shadow-md'}`}>
                 <div className="flex items-center gap-5">
-                  <button onClick={() => toggleItem(item.id)} className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 transition-all duration-500 ${item.completed ? 'border-accent bg-accent text-white scale-90' : 'border-slate-100 text-transparent hover:border-accent/30 bg-slate-50'}`}><Check size={28} strokeWidth={4} /></button>
+                  <button onClick={() => toggleItem(item.id)} className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border-2 transition-all ${item.completed ? 'border-accent bg-accent text-white scale-90' : 'border-slate-100 text-transparent bg-slate-50'}`}><Check size={28} strokeWidth={4} /></button>
                   <div className="flex-1 min-w-0" onClick={() => setEditingItemId(editingItemId === item.id ? null : item.id)}>
                     <div className="flex justify-between items-start gap-3">
-                        <span className={`text-base font-bold leading-snug break-words transition-all ${item.completed ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{item.description}</span>
-                        <div className="shrink-0 flex flex-col items-end">
-                            <span className={`text-[11px] font-black px-3 py-1.5 rounded-xl border ${item.completed ? 'bg-slate-100 text-slate-400 border-slate-200' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
-                                {item.quantity}{item.unit}
-                            </span>
-                            {(item.price || 0) > 0 && <span className="text-[10px] font-black text-accent mt-2 tracking-tight">R$ {item.price?.toFixed(2)}</span>}
-                        </div>
+                        <span className={`text-base font-bold leading-snug break-words ${item.completed ? 'text-slate-400 line-through' : 'text-slate-800'}`}>{item.description}</span>
+                        <span className={`text-[11px] font-black px-3 py-1.5 rounded-xl border shrink-0 ${item.completed ? 'bg-slate-100 text-slate-400' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>{item.quantity}{item.unit}</span>
                     </div>
                   </div>
                 </div>
                 {editingItemId === item.id && (
-                  <div className="mt-5 border-t border-slate-100 pt-5 space-y-5 animate-slide-up">
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Produto</label>
-                        <input type="text" className="w-full p-4 text-sm rounded-2xl border-2 border-slate-50 focus:border-accent focus:outline-none font-bold text-slate-800 bg-slate-50" value={item.description} onChange={(e) => updateItem(item.id, { description: e.target.value })} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Qtd / Medida</label>
-                            <div className="flex border-2 border-slate-50 rounded-2xl overflow-hidden bg-slate-50">
-                                <input type="number" step="any" className="w-1/2 p-4 text-sm bg-transparent focus:outline-none font-bold text-slate-700" value={item.quantity} onChange={(e) => updateItem(item.id, { quantity: parseFloat(e.target.value) || 0 })} />
-                                <input type="text" className="w-1/2 p-4 text-sm bg-white border-l focus:outline-none font-medium" value={item.unit} onChange={(e) => updateItem(item.id, { unit: e.target.value })} />
-                            </div>
-                         </div>
-                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-black text-slate-400 uppercase ml-2 tracking-widest">Preço Un.</label>
-                            <input type="number" step="0.01" className="w-full p-4 text-sm rounded-2xl border-2 border-slate-50 focus:border-accent focus:outline-none font-bold text-slate-700 bg-slate-50" value={item.price || ''} onChange={(e) => updateItem(item.id, { price: parseFloat(e.target.value) || 0 })} placeholder="0,00" />
-                         </div>
-                    </div>
-                    <div className="flex justify-between gap-4 pt-2">
-                        <button onClick={() => deleteItem(item.id)} className="flex items-center justify-center gap-3 rounded-2xl bg-red-50 px-6 py-5 text-xs font-black text-red-600 border border-red-100 flex-1 active:scale-95 transition-all"><Trash2 size={18} /> Remover</button>
-                        <button onClick={() => setEditingItemId(null)} className="flex items-center justify-center gap-3 rounded-2xl bg-slate-900 px-6 py-5 text-xs font-black text-white shadow-xl flex-1 active:scale-95 transition-all">Pronto</button>
+                  <div className="mt-5 border-t border-slate-100 pt-5 space-y-4 animate-slide-up">
+                    <input type="text" className="w-full p-4 text-sm rounded-2xl border-2 border-slate-50 font-bold bg-slate-50" value={item.description} onChange={(e) => updateItem(item.id, { description: e.target.value })} />
+                    <div className="flex gap-4">
+                        <button onClick={() => deleteItem(item.id)} className="flex items-center justify-center gap-3 rounded-2xl bg-red-50 px-6 py-4 text-xs font-black text-red-600 flex-1">Remover</button>
+                        <button onClick={() => setEditingItemId(null)} className="flex items-center justify-center gap-3 rounded-2xl bg-slate-900 px-6 py-4 text-xs font-black text-white flex-1">Pronto</button>
                     </div>
                   </div>
                 )}
@@ -370,14 +269,13 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
         )}
       </main>
 
-      <footer className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl p-6 border-t border-slate-100 z-20 pb-safe shadow-[0_-20px_50px_rgba(0,0,0,0.05)] rounded-t-[3rem]">
+      <footer className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl p-6 border-t border-slate-100 z-20 pb-safe rounded-t-[3rem]">
         <form onSubmit={handleAddItem} className="flex gap-3 w-full max-w-2xl mx-auto">
-          <input type="text" value={newItemText} onChange={(e) => setNewItemText(e.target.value)} placeholder="O que vamos comprar hoje?" className="flex-1 rounded-2xl border-2 border-slate-100 bg-slate-50 px-6 py-5 text-slate-900 focus:border-accent focus:bg-white focus:outline-none transition-all font-bold placeholder:text-slate-300 shadow-inner" />
-          <button type="submit" disabled={!newItemText.trim()} className="flex items-center justify-center rounded-2xl bg-slate-900 px-8 text-white shadow-2xl active:scale-90 disabled:opacity-50 transition-all"><Plus size={36} strokeWidth={3} /></button>
+          <input type="text" value={newItemText} onChange={(e) => setNewItemText(e.target.value)} placeholder="O que comprar?" className="flex-1 rounded-2xl border-2 border-slate-100 bg-slate-50 px-6 py-4 text-slate-900 focus:border-accent focus:bg-white focus:outline-none transition-all font-bold" />
+          <button type="submit" disabled={!newItemText.trim()} className="flex items-center justify-center rounded-2xl bg-slate-900 px-8 text-white shadow-xl active:scale-90 disabled:opacity-50 transition-all"><Plus size={32} strokeWidth={3} /></button>
         </form>
       </footer>
 
-      {showShareModal && <ShareModal onClose={() => setShowShareModal(false)} listName={list.name} />}
       {showTextImportModal && <ImportModal onClose={() => setShowTextImportModal(false)} onImport={(items) => { handleAction([...list.items, ...items]); setShowTextImportModal(false); }} isMergeMode={true} />}
     </div>
   );

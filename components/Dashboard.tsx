@@ -1,11 +1,12 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { ShoppingList } from '../types';
-import { Plus, ShoppingBag, Smartphone, X, Check, Settings, Download, Upload, Database, Code, ArrowRight, Star, CloudOff, Cloud, ShieldCheck } from 'lucide-react';
+import { Plus, ShoppingBag, Smartphone, X, Check, Settings, Download, Upload, Database, Code, ArrowRight, Star, CloudOff, Cloud, ShieldCheck, FileSpreadsheet } from 'lucide-react';
 import { ShareModal } from './ShareModal';
 import { FIXED_LIST_ID } from '../hooks/useLocalStorage';
 
 const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxo6cKf1F3GPwuPbxmIBUJir-PBNbtWrKzT4fQlwVapq27XWWoMxD-3hgcfFLT-C0CDpg/exec';
+const MASTER_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1Syi4iWiSR5-XCPkW4xSyZwcwQ_PvsykAf_FnUhX2Po4/edit?usp=sharing';
 
 interface DashboardProps {
   lists: ShoppingList[];
@@ -30,7 +31,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [syncEnabled, setSyncEnabled] = useState(true);
   const [showInstallHelp, setShowInstallHelp] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [showScriptModal, setShowScriptModal] = useState(false);
   
   const [sheetsUrl, setSheetsUrl] = useState(localStorage.getItem('gsheets_url') || DEFAULT_SHEETS_URL);
   
@@ -66,7 +66,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <header className="relative z-10 flex justify-between items-start">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
-              {/* ESPAÇO PARA O SEU LOGO: Troque o div abaixo por <img src="URL_DO_SEU_LOGO" className="h-10 w-auto" /> */}
               <div className="bg-white/10 p-2.5 rounded-2xl backdrop-blur-md border border-white/10">
                 <ShieldCheck size={24} className="text-accent" />
               </div>
@@ -88,7 +87,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </header>
 
-        <div className="mt-8 relative z-10">
+        <div className="mt-8 relative z-10 space-y-3">
            <button 
              onClick={() => setShowCreateMenu(true)} 
              className="w-full flex items-center justify-between group rounded-2xl bg-white p-5 text-slate-900 shadow-xl active:scale-[0.98] transition-all"
@@ -101,6 +100,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
              </div>
              <ArrowRight size={20} className="text-slate-300 group-hover:text-accent transition-colors" />
            </button>
+
+           <a 
+             href={MASTER_SHEET_URL}
+             target="_blank"
+             rel="noopener noreferrer"
+             className="w-full flex items-center justify-between group rounded-2xl bg-white/10 border border-white/10 p-4 text-white hover:bg-white/20 active:scale-[0.98] transition-all"
+           >
+             <div className="flex items-center gap-4">
+                <div className="bg-emerald-500/20 p-2.5 rounded-xl text-emerald-400">
+                    <FileSpreadsheet size={20} />
+                </div>
+                <div>
+                    <span className="font-bold text-sm block leading-none">Planilha Mestra</span>
+                    <span className="text-[10px] text-white/50 uppercase font-black tracking-widest">Google Sheets</span>
+                </div>
+             </div>
+             <ArrowRight size={16} className="text-white/20 group-hover:text-emerald-400 transition-colors" />
+           </a>
         </div>
       </div>
 
@@ -164,7 +181,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </footer>
       </div>
 
-      {/* Modais (Configurações, Criar, etc.) seguem o mesmo padrão visual do ListView */}
       {showSettings && (
         <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center bg-slate-900/80 p-0 sm:p-4 backdrop-blur-sm animate-fade-in overflow-y-auto">
             <div className="w-full max-w-sm rounded-t-[3rem] sm:rounded-3xl bg-white p-8 shadow-2xl relative my-auto border-t sm:border border-slate-100">
