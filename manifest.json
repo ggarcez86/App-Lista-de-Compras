@@ -1,10 +1,9 @@
-
 {
   "id": "br.com.garcezheredia.compras.v1",
   "name": "Família Garcez Heredia - Compras",
   "short_name": "Garcez Heredia",
   "description": "App de Compras Inteligente da Família Garcez Heredia.",
-  "start_url": "./index.html?showPreview=true",
+  "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

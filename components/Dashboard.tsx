@@ -63,66 +63,66 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="absolute bottom-0 left-0 -ml-10 -mb-10 h-48 w-48 bg-blue-500/10 rounded-full blur-3xl"></div>
         
         {/* Barra Superior de Ações */}
-        <div className="relative z-20 flex justify-between items-center mb-6">
-            <button onClick={() => setShowSettings(true)} className="p-3.5 rounded-2xl bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 transition-all active:scale-90 text-white/40">
-              <Settings size={24} />
+        <div className="relative z-20 flex justify-between items-center mb-4">
+            <button onClick={() => setShowSettings(true)} className="p-4 rounded-2xl bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 transition-all active:scale-90 text-white/40">
+              <Settings size={26} />
             </button>
-            <button onClick={() => setShowInstallHelp(true)} className="p-3.5 rounded-2xl bg-accent/20 hover:bg-accent/30 text-accent border border-accent/20 transition-all active:scale-90">
-              <Smartphone size={24} />
+            <button onClick={() => setShowInstallHelp(true)} className="p-4 rounded-2xl bg-accent/20 hover:bg-accent/30 text-accent border border-accent/20 transition-all active:scale-90">
+              <Smartphone size={26} />
             </button>
         </div>
 
-        {/* Logo Centralizado e MUITO Maior (Sem Fundo) */}
-        <header className="relative z-10 flex flex-col items-center justify-center py-4">
+        {/* Logo Centralizado e GIGANTE (Sem Fundo) */}
+        <header className="relative z-10 flex flex-col items-center justify-center py-2">
             <img 
               src="https://bioflow.online/logosemfundo.png" 
               alt="Garcez Heredia" 
-              className="h-64 sm:h-80 w-auto object-contain transition-transform active:scale-95 cursor-pointer drop-shadow-[0_25px_30px_rgba(0,0,0,0.6)]"
+              className="h-72 sm:h-96 w-auto object-contain transition-transform active:scale-95 cursor-pointer drop-shadow-[0_30px_40px_rgba(0,0,0,0.6)]"
               onClick={() => window.location.reload()}
             />
         </header>
 
-        <div className="mt-6 relative z-10 space-y-4 max-w-sm mx-auto">
+        <div className="mt-4 relative z-10 space-y-4 max-w-sm mx-auto">
            <button 
              onClick={() => setShowCreateMenu(true)} 
-             className="w-full flex items-center justify-between group rounded-[2.5rem] bg-white p-6 text-slate-900 shadow-2xl active:scale-[0.98] transition-all"
+             className="w-full flex items-center justify-between group rounded-[2.5rem] bg-white p-7 text-slate-900 shadow-2xl active:scale-[0.98] transition-all"
            >
-             <div className="flex items-center gap-4">
+             <div className="flex items-center gap-5">
                 <div className="bg-accent/10 p-4 rounded-[1.5rem] text-accent">
-                    <Plus size={32} strokeWidth={3} />
+                    <Plus size={34} strokeWidth={3} />
                 </div>
                 <span className="font-heading font-black text-2xl tracking-tighter">Nova Lista</span>
              </div>
-             <ArrowRight size={24} className="text-slate-300 group-hover:text-accent transition-colors" />
+             <ArrowRight size={26} className="text-slate-300 group-hover:text-accent transition-colors" />
            </button>
 
            <a 
              href={MASTER_SHEET_URL}
              target="_blank"
              rel="noopener noreferrer"
-             className="w-full flex items-center justify-between group rounded-[2rem] bg-white/5 border border-white/10 p-6 text-white hover:bg-white/10 active:scale-[0.98] transition-all"
+             className="w-full flex items-center justify-between group rounded-[2.2rem] bg-white/5 border border-white/10 p-6 text-white hover:bg-white/10 active:scale-[0.98] transition-all"
            >
              <div className="flex items-center gap-5 text-left">
-                <div className="bg-emerald-500/10 p-3.5 rounded-2xl text-emerald-400">
-                    <FileSpreadsheet size={28} />
+                <div className="bg-emerald-500/10 p-4 rounded-2xl text-emerald-400">
+                    <FileSpreadsheet size={30} />
                 </div>
                 <div>
-                    <span className="font-bold text-lg block leading-tight">Planilha Mestra</span>
-                    <span className="text-[11px] text-white/30 uppercase font-black tracking-widest">Google Sheets Online</span>
+                    <span className="font-bold text-xl block leading-tight">Planilha Mestra</span>
+                    <span className="text-[12px] text-white/30 uppercase font-black tracking-widest">Acesso Direto Sheets</span>
                 </div>
              </div>
-             <ArrowRight size={20} className="text-white/10 group-hover:text-emerald-400 transition-colors" />
+             <ArrowRight size={22} className="text-white/10 group-hover:text-emerald-400 transition-colors" />
            </a>
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-md px-6 -mt-16 relative z-20 space-y-12">
-        <div className="space-y-6">
+      <div className="mx-auto w-full max-w-xl px-6 -mt-16 relative z-20 space-y-12">
+        <div className="space-y-8">
           <div className="flex justify-center items-center">
-            <h2 className="text-[12px] font-black text-slate-400 uppercase tracking-[0.5em] flex items-center gap-6">
-                <span className="h-1 w-10 rounded-full bg-slate-200"></span>
+            <h2 className="text-[14px] font-black text-slate-400 uppercase tracking-[0.6em] flex items-center gap-6">
+                <span className="h-1 w-12 rounded-full bg-slate-200"></span>
                 Suas Listas
-                <span className="h-1 w-10 rounded-full bg-slate-200"></span>
+                <span className="h-1 w-12 rounded-full bg-slate-200"></span>
             </h2>
           </div>
           
@@ -133,33 +133,33 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   return (
                     <div 
                         key={list.id} 
-                        className={`bg-white rounded-[3rem] border-2 shadow-sm overflow-hidden active:scale-[0.97] transition-all hover:shadow-2xl cursor-pointer group ${isFixed ? 'border-amber-200 bg-amber-50/40' : 'border-transparent'}`} 
+                        className={`bg-white rounded-[3.5rem] border-2 shadow-sm overflow-hidden active:scale-[0.97] transition-all hover:shadow-2xl cursor-pointer group ${isFixed ? 'border-amber-200 bg-amber-50/50' : 'border-transparent'}`} 
                         onClick={() => onSelectList(list.id)}
                     >
-                        <div className="p-8 flex justify-between items-center text-left">
+                        <div className="px-6 py-9 sm:px-10 flex justify-between items-center text-left">
                             <div className="overflow-hidden pr-4 flex-1">
-                                <div className="flex items-center gap-4 mb-3">
-                                    <h3 className={`font-heading font-black truncate text-2xl transition-colors ${isFixed ? 'text-amber-900' : 'text-slate-800 group-hover:text-accent'}`}>
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-3">
+                                    <h3 className={`font-heading font-black text-2xl sm:text-3xl tracking-tight transition-colors ${isFixed ? 'text-amber-900' : 'text-slate-800 group-hover:text-accent'}`}>
                                         {list.name}
                                     </h3>
                                     {isFixed && (
-                                        <span className="bg-amber-500 text-[10px] text-white px-3 py-1.5 rounded-lg font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0 shadow-sm shadow-amber-200">
+                                        <span className="bg-amber-500 text-[10px] text-white px-3.5 py-2 rounded-xl font-black uppercase tracking-widest flex items-center gap-2 shrink-0 shadow-lg shadow-amber-100">
                                             <Star size={12} fill="white" /> FIXA
                                         </span>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-5">
-                                    <p className={`text-sm font-bold uppercase tracking-tight ${isFixed ? 'text-amber-600' : isLocal ? 'text-slate-400' : 'text-blue-500'}`}>
+                                <div className="flex items-center gap-4">
+                                    <p className={`text-sm sm:text-base font-bold uppercase tracking-tight ${isFixed ? 'text-amber-600' : isLocal ? 'text-slate-400' : 'text-blue-500'}`}>
                                         {list.items.length} itens
                                     </p>
-                                    <div className="h-2 w-2 rounded-full bg-slate-200" />
-                                    <p className="text-[12px] font-bold text-slate-300 uppercase tracking-tighter">
+                                    <div className="h-2.5 w-2.5 rounded-full bg-slate-200" />
+                                    <p className="text-[12px] sm:text-[13px] font-bold text-slate-300 uppercase tracking-tighter">
                                         {isFixed ? 'Residencial Mensal' : isLocal ? 'Modo Local' : 'Nuvem Ativa'}
                                     </p>
                                 </div>
                             </div>
-                            <div className={`h-20 w-20 rounded-[1.8rem] flex items-center justify-center transition-all shadow-md ${isFixed ? 'bg-amber-500 text-white shadow-amber-200' : isLocal ? 'bg-slate-100 text-slate-400 border border-slate-200' : 'bg-slate-50 text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white group-hover:border-accent'}`}>
-                                {isLocal ? <CloudOff size={34} /> : (isFixed ? <Check size={42} strokeWidth={4} /> : <ShoppingBag size={34} />)}
+                            <div className={`h-20 w-20 sm:h-24 sm:w-24 rounded-[2.2rem] flex items-center justify-center transition-all shadow-md shrink-0 ${isFixed ? 'bg-amber-500 text-white shadow-amber-200' : isLocal ? 'bg-slate-100 text-slate-400 border border-slate-200' : 'bg-slate-50 text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white group-hover:border-accent'}`}>
+                                {isLocal ? <CloudOff size={34} /> : (isFixed ? <Check size={44} strokeWidth={4} /> : <ShoppingBag size={34} />)}
                             </div>
                         </div>
                     </div>
@@ -169,13 +169,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Footer com crédito discreto */}
-        <footer className="pt-16 pb-12">
-            <p className="text-[12px] font-black text-slate-300 uppercase tracking-[0.6em]">
+        <footer className="pt-20 pb-16">
+            <p className="text-[13px] font-black text-slate-300 uppercase tracking-[0.8em]">
                 Sistema Residencial v2.5
             </p>
         </footer>
       </div>
-
+      {/* ... (restante do componente Dashboard permanece igual) ... */}
       {showSettings && (
         <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center bg-slate-900/80 p-0 sm:p-4 backdrop-blur-sm animate-fade-in overflow-y-auto">
             <div className="w-full max-w-sm rounded-t-[3rem] sm:rounded-3xl bg-white p-8 shadow-2xl relative my-auto border-t sm:border border-slate-100">

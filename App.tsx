@@ -97,9 +97,9 @@ function App() {
 
   if (!loaded) return (
     <div className="flex h-screen flex-col items-center justify-center bg-[#1e293b] p-6 text-center">
-      <div className="flex flex-col items-center w-full max-w-[500px] animate-pulse">
-        <img src="https://bioflow.online/logosemfundo.png" alt="Carregando..." className="w-full mb-12 drop-shadow-[0_25px_25px_rgba(0,0,0,0.5)]" />
-        <div className="w-64 h-1.5 bg-white/10 rounded-full overflow-hidden relative">
+      <div className="flex flex-col items-center w-full max-w-[600px] animate-pulse">
+        <img src="https://bioflow.online/logosemfundo.png" alt="Carregando..." className="w-[85vw] max-w-[450px] mb-12 drop-shadow-[0_35px_35px_rgba(0,0,0,0.6)]" />
+        <div className="w-64 h-2 bg-white/10 rounded-full overflow-hidden relative">
             <div className="absolute inset-0 bg-accent w-1/2 rounded-full animate-[shimmer_2s_infinite_linear]"></div>
         </div>
       </div>
