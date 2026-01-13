@@ -4,8 +4,13 @@ import { Plus, ShoppingBag, Smartphone, X, Check, Settings, Download, Upload, Da
 import { ShareModal } from './ShareModal';
 import { FIXED_LIST_ID } from '../hooks/useLocalStorage';
 
-const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxo6cKf1F3GPwuPbxmIBUJir-PBNbtWrKzT4fQlwVapq27XWWoMxD-3hgcfFLT-C0CDpg/exec';
+// Nova URL fornecida pelo usuário
+const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycby5cYTDF49bQzIkw8onpC4DSVWiQqSWm2pYcgBWb_xZH9DLwc0tTolLXOgJ4dmADU5FNA/exec';
 const MASTER_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1Syi4iWiSR5-XCPkW4xSyZwcwQ_PvsykAf_FnUhX2Po4/edit?usp=sharing';
+
+// Cor Petróleo Elegante
+const PETROLEO_COLOR = '#0a3d4a';
+const PETROLEO_LIGHT = '#e6f0f2';
 
 interface DashboardProps {
   lists: ShoppingList[];
@@ -57,8 +62,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f8fafc] pb-20 text-center">
-      {/* Topo Decorativo com a Identidade da Família */}
-      <div className="bg-[#1e293b] text-white pt-8 pb-32 px-6 rounded-b-[5rem] shadow-2xl relative overflow-hidden">
+      {/* Topo Petróleo Decorativo */}
+      <div className="bg-[#0a1e26] text-white pt-8 pb-32 px-6 rounded-b-[5rem] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 -mr-10 -mt-10 h-64 w-64 bg-accent/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 -ml-10 -mb-10 h-48 w-48 bg-blue-500/10 rounded-full blur-3xl"></div>
         
@@ -72,7 +77,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </button>
         </div>
 
-        {/* Logo Centralizado e GIGANTE (Sem Fundo) */}
+        {/* Logo Centralizado */}
         <header className="relative z-10 flex flex-col items-center justify-center py-2">
             <img 
               src="https://bioflow.online/logosemfundo.png" 
@@ -88,12 +93,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
              className="w-full flex items-center justify-between group rounded-[2.5rem] bg-white p-7 text-slate-900 shadow-2xl active:scale-[0.98] transition-all"
            >
              <div className="flex items-center gap-5">
-                <div className="bg-accent/10 p-4 rounded-[1.5rem] text-accent">
+                <div className="bg-[#0a3d4a]/10 p-4 rounded-[1.5rem] text-[#0a3d4a]">
                     <Plus size={34} strokeWidth={3} />
                 </div>
                 <span className="font-heading font-black text-2xl tracking-tighter">Nova Lista</span>
              </div>
-             <ArrowRight size={26} className="text-slate-300 group-hover:text-accent transition-colors" />
+             <ArrowRight size={26} className="text-slate-300 group-hover:text-[#0a3d4a] transition-colors" />
            </button>
 
            <a 
@@ -133,23 +138,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   return (
                     <div 
                         key={list.id} 
-                        className={`bg-white rounded-[3.5rem] border-2 shadow-sm overflow-hidden active:scale-[0.97] transition-all hover:shadow-2xl cursor-pointer group ${isFixed ? 'border-amber-200 bg-amber-50/50' : 'border-transparent'}`} 
+                        className={`bg-white rounded-[3.5rem] border-2 shadow-sm overflow-hidden active:scale-[0.97] transition-all hover:shadow-2xl cursor-pointer group ${isFixed ? 'border-[#0a3d4a]/20 bg-[#f4fbfc]' : 'border-transparent'}`} 
                         onClick={() => onSelectList(list.id)}
                     >
                         <div className="px-6 py-9 sm:px-10 flex justify-between items-center text-left gap-4">
                             <div className="flex-1 min-w-0">
-                                <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-3">
-                                    <h3 className={`font-heading font-black text-2xl sm:text-3xl tracking-tight transition-colors leading-tight ${isFixed ? 'text-amber-900' : 'text-slate-800 group-hover:text-accent'}`}>
+                                <div className="flex items-center gap-3 mb-2 overflow-hidden">
+                                    <h3 className={`font-heading font-black text-xl sm:text-3xl tracking-tight transition-colors leading-tight whitespace-nowrap overflow-hidden text-ellipsis ${isFixed ? 'text-[#0a3d4a]' : 'text-slate-800 group-hover:text-accent'}`}>
                                         {list.name}
                                     </h3>
-                                    {isFixed && (
-                                        <span className="bg-amber-500 text-[9px] sm:text-[10px] text-white px-3 py-1.5 rounded-xl font-black uppercase tracking-widest flex items-center gap-1.5 shrink-0 shadow-lg shadow-amber-100">
-                                            <Star size={12} fill="white" /> FIXA
-                                        </span>
-                                    )}
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <p className={`text-sm sm:text-base font-bold uppercase tracking-tight ${isFixed ? 'text-amber-600' : isLocal ? 'text-slate-400' : 'text-blue-500'}`}>
+                                    <p className={`text-sm sm:text-base font-bold uppercase tracking-tight ${isFixed ? 'text-[#0a3d4a]/70' : isLocal ? 'text-slate-400' : 'text-blue-500'}`}>
                                         {list.items.length} itens
                                     </p>
                                     <div className="h-2 w-2 rounded-full bg-slate-200" />
@@ -158,7 +158,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                     </p>
                                 </div>
                             </div>
-                            <div className={`h-16 w-16 sm:h-24 sm:w-24 rounded-[2.2rem] flex items-center justify-center transition-all shadow-md shrink-0 ${isFixed ? 'bg-amber-500 text-white shadow-amber-200' : isLocal ? 'bg-slate-100 text-slate-400 border border-slate-200' : 'bg-slate-50 text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white group-hover:border-accent'}`}>
+                            <div className={`h-16 w-16 sm:h-24 sm:w-24 rounded-[2.2rem] flex items-center justify-center transition-all shadow-md shrink-0 ${isFixed ? 'bg-[#0a3d4a] text-white shadow-[#0a3d4a]/20' : isLocal ? 'bg-slate-100 text-slate-400 border border-slate-200' : 'bg-slate-50 text-slate-400 border border-slate-100 group-hover:bg-accent group-hover:text-white group-hover:border-accent'}`}>
                                 {isLocal ? <CloudOff size={30} /> : (isFixed ? <Check size={40} strokeWidth={4} /> : <ShoppingBag size={30} />)}
                             </div>
                         </div>
@@ -187,13 +187,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <div className="space-y-8 text-left">
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-[11px] text-blue-600 font-black uppercase tracking-widest">
+                            <div className="flex items-center gap-2 text-[11px] text-[#0a3d4a] font-black uppercase tracking-widest">
                                 <Database size={14} /> Link de Sincronia
                             </div>
                         </div>
                         <input 
                             type="text" 
-                            className="w-full text-xs p-5 rounded-2xl border-2 border-slate-100 focus:border-blue-500 focus:outline-none bg-slate-50 font-mono"
+                            className="w-full text-xs p-5 rounded-2xl border-2 border-slate-100 focus:border-[#0a3d4a] focus:outline-none bg-slate-50 font-mono"
                             value={sheetsUrl}
                             onChange={(e) => setSheetsUrl(e.target.value)}
                         />
@@ -204,13 +204,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
                             <span className="font-black text-[10px] uppercase">Exportar</span>
                         </button>
                         <button onClick={() => fileInputRef.current?.click()} className="flex flex-col items-center gap-3 rounded-2xl border p-5 bg-white active:scale-95 shadow-sm">
-                            <Upload className="text-amber-500" />
-                            <span className="font-black text-[10px] uppercase">Importar</span>
+                            <Upload className="text-[#0a3d4a]" />
+                            <span className="font-black text-[10px] uppercase">Importar JSON</span>
                         </button>
-                        <input type="file" ref={fileInputRef} onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const content = e.target?.result as string; const importedData = JSON.parse(content); onRestoreBackup(Array.isArray(importedData) ? importedData : [importedData]); setShowSettings(false); } catch (err) { alert("Erro ao ler o arquivo."); } }; reader.readAsText(file); }} accept=".json" className="hidden" />
+                        <input type="file" ref={fileInputRef} onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const content = e.target?.result as string; const importedData = JSON.parse(content); onRestoreBackup(Array.isArray(importedData) ? importedData : [importedData]); setShowSettings(false); } catch (err) { alert("Erro ao ler o arquivo."); } }; reader.readAsText(file); if (fileInputRef.current) fileInputRef.current.value = ''; }} accept=".json" className="hidden" />
                     </div>
                 </div>
-                <button onClick={() => setShowSettings(false)} className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black mt-10 shadow-xl">Confirmar</button>
+                <button onClick={() => setShowSettings(false)} className="w-full bg-[#0a3d4a] text-white py-5 rounded-2xl font-black mt-10 shadow-xl">Confirmar</button>
             </div>
         </div>
       )}
@@ -227,7 +227,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         1. Toque no ícone de <b>Compartilhar</b><br/>
                         2. Escolha <b>"Adicionar à Tela de Início"</b>
                     </p>
-                    <button onClick={() => setShowInstallHelp(false)} className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg mt-10">Concluído</button>
+                    <button onClick={() => setShowInstallHelp(false)} className="w-full bg-[#0a3d4a] text-white py-5 rounded-2xl font-black text-lg mt-10">Concluído</button>
                 </div>
             </div>
         </div>
@@ -255,7 +255,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <div className="space-y-4">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Apelido da Lista</label>
-                                <input autoFocus type="text" className="w-full p-5 rounded-2xl border-2 bg-slate-50 font-bold focus:border-accent focus:outline-none transition-all" value={newListName} onChange={(e) => setNewListName(e.target.value)} placeholder="Ex: Supermercado" />
+                                <input autoFocus type="text" className="w-full p-5 rounded-2xl border-2 bg-slate-50 font-bold focus:border-[#0a3d4a] focus:outline-none transition-all" value={newListName} onChange={(e) => setNewListName(e.target.value)} placeholder="Ex: Supermercado" />
                             </div>
                             
                             <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -277,7 +277,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                 </button>
                             </div>
                         </div>
-                        <button type="submit" className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg shadow-xl mt-4 active:scale-95 transition-all">Criar Lista</button>
+                        <button type="submit" className="w-full bg-[#0a3d4a] text-white py-5 rounded-2xl font-black text-lg shadow-xl mt-4 active:scale-95 transition-all">Criar Lista</button>
                     </form>
                 )}
             </div>

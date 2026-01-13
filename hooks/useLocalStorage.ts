@@ -1,15 +1,25 @@
-
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { ShoppingList } from '../types';
+import { ShoppingList, ShoppingItem } from '../types';
 
 const STORAGE_KEY = 'my_shopping_lists_v2';
 export const FIXED_LIST_ID = 'monthly-fixed-list-001';
+
+const INITIAL_SECTIONS = [
+  "Mercearia",
+  "Bebidas",
+  "Higiene e Limpeza",
+  "Hortifrúti",
+  "Padaria",
+  "Frios e Laticínios",
+  "Açougue",
+  "Congelados",
+  "Outras"
+];
 
 export const useLocalStorage = () => {
   const [lists, setLists] = useState<ShoppingList[]>([]);
   const [loaded, setLoaded] = useState(false);
 
-  // 1. Carregar do localStorage e garantir a Lista Fixa
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     let currentLists: ShoppingList[] = [];
@@ -25,13 +35,21 @@ export const useLocalStorage = () => {
       }
     }
 
-    // Garante que a Lista Fixa Mensal existe
     const fixedListExists = currentLists.some(l => l.id === FIXED_LIST_ID);
     if (!fixedListExists) {
+      const fixedItems: ShoppingItem[] = INITIAL_SECTIONS.map((section, idx) => ({
+        id: `section-${idx}`,
+        description: section,
+        quantity: 0,
+        unit: '',
+        completed: false,
+        isSection: true
+      }));
+
       const fixedList: ShoppingList = {
         id: FIXED_LIST_ID,
         name: '🛒 Lista Mensal Fixa',
-        items: [],
+        items: fixedItems,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };
@@ -42,7 +60,6 @@ export const useLocalStorage = () => {
     setLoaded(true);
   }, []);
 
-  // 2. Salvar no localStorage
   useEffect(() => {
     if (loaded) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(lists));
@@ -63,11 +80,21 @@ export const useLocalStorage = () => {
   }, []);
 
   const deleteList = useCallback((id: string) => {
-    // Se for a lista fixa, nós apenas limpamos os itens em vez de deletar
     if (id === FIXED_LIST_ID) {
-      setLists((prev) => prev.map(l => 
-        l.id === FIXED_LIST_ID ? { ...l, items: [], updatedAt: Date.now() } : l
-      ));
+      setLists((prev) => prev.map(l => {
+        if (l.id === FIXED_LIST_ID) {
+           const resetItems = INITIAL_SECTIONS.map((section, idx) => ({
+              id: `section-${idx}`,
+              description: section,
+              quantity: 0,
+              unit: '',
+              completed: false,
+              isSection: true
+           }));
+           return { ...l, items: resetItems, updatedAt: Date.now() };
+        }
+        return l;
+      }));
     } else {
       setLists((prev) => prev.filter((l) => l.id !== id));
     }
@@ -93,32 +120,61 @@ export const useLocalStorage = () => {
   const importBackup = useCallback((backupLists: ShoppingList[]) => {
     let count = 0;
     setLists((prev) => {
-      const existingIds = new Set(prev.map(l => l.id));
       const newLists = [...prev];
 
-      backupLists.forEach(list => {
-        if (list.id === FIXED_LIST_ID) {
-          // Se o backup tem a lista fixa, mescla os itens na nossa atual
+      // Cast incomingList to any to support minified property access (i, n, sd) commonly found in backups
+      backupLists.forEach((incomingList: any) => {
+        // Fix for Error: Property 'i' does not exist on type 'ShoppingList' (Line 126)
+        const rawItems = incomingList.items || incomingList.i || [];
+        
+        // Sanatiza itens para garantir que não existam campos vazios/nulos
+        const sanitizedItems: ShoppingItem[] = rawItems.map((item: any) => {
+            const desc = item.description || item.item || item.n || item.d || "Item sem nome";
+            return {
+                id: crypto.randomUUID(),
+                description: String(desc).replace('[SEÇÃO]', '').trim(),
+                quantity: parseFloat(item.quantity || item.q || item.qtd) || 0,
+                unit: item.unit || item.u || "",
+                brand: item.brand || item.b || "",
+                price: parseFloat(item.price || item.p || 0) || 0,
+                note: item.note || item.obs || "",
+                completed: !!(item.completed || item.c),
+                isSection: !!(item.isSection || item.s || String(desc).includes("[SEÇÃO]"))
+            };
+        });
+
+        if (incomingList.id === FIXED_LIST_ID) {
           const idx = newLists.findIndex(l => l.id === FIXED_LIST_ID);
           if (idx !== -1) {
-            newLists[idx] = { ...newLists[idx], items: [...newLists[idx].items, ...list.items], updatedAt: Date.now() };
+            // No caso da mensal fixa, mesclamos apenas itens que não existem
+            const currentItemNames = new Set(newLists[idx].items.map(i => i.description));
+            const itemsToAdd = sanitizedItems.filter(si => !currentItemNames.has(si.description));
+            newLists[idx] = { 
+                ...newLists[idx], 
+                items: [...newLists[idx].items, ...itemsToAdd], 
+                updatedAt: Date.now() 
+            };
           }
-          return;
+        } else {
+            const newList: ShoppingList = {
+                id: crypto.randomUUID(),
+                // Fix for Error: Property 'n' does not exist on type 'ShoppingList' (Line 159)
+                name: incomingList.name || incomingList.n || `Importada ${Date.now()}`,
+                items: sanitizedItems,
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                // Fix for Error: Property 'sd' does not exist on type 'ShoppingList' (Line 163)
+                syncDisabled: !!(incomingList.syncDisabled || incomingList.sd)
+            };
+            newLists.push(newList);
+            count++;
         }
-
-        let listToPush = { ...list };
-        if (existingIds.has(listToPush.id)) {
-            listToPush.id = crypto.randomUUID();
-            listToPush.name = `${listToPush.name} (Importada)`;
-        }
-        newLists.push(listToPush);
-        count++;
       });
       return newLists;
     });
     
     setTimeout(() => {
-        if (count > 0) alert(`${count} lista(s) importada(s) com sucesso!`);
+        alert("Backup processado com sucesso!");
     }, 100);
   }, []);
 

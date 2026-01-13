@@ -10,8 +10,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ onClose, listName }) => 
   const [copied, setCopied] = useState(false);
 
   const scriptCode = `/**
- * SCRIPT DE SINCRONIZAÇÃO - VERSÃO 3.0 (ULTRA-SYNC)
- * Permite editar na planilha e ver no app, e vice-versa.
+ * SCRIPT DE SINCRONIZAÇÃO - VERSÃO 8.0 (ANTI-ERASE)
+ * Gerencia Seções, Produtos, Preços e Status com alta persistência.
  */
 
 function doGet() {
@@ -19,97 +19,82 @@ function doGet() {
   const lastRow = sheet.getLastRow();
   const listName = sheet.getRange("A1").getValue() || "Minha Lista";
   
-  // Se a planilha estiver vazia (só cabeçalho ou menos)
   if (lastRow < 2) return ContentService.createTextOutput(JSON.stringify({name: listName, items: []})).setMimeType(ContentService.MimeType.JSON);
 
-  // Lê os dados das colunas A até H
-  const range = sheet.getRange(2, 1, lastRow - 1, 8);
-  const values = range.getValues();
+  const values = sheet.getRange(2, 1, lastRow - 1, 8).getValues();
   
   const items = values.map((row, index) => {
-    if (!row[0]) return null; // Pula linhas sem nome
+    if (!row[0]) return null;
+    const desc = String(row[0]);
     return {
-      id: "remote-" + index, // IDs temporários para itens vindos da planilha
-      description: String(row[0]),
-      quantity: parseFloat(row[1]) || 1,
-      unit: String(row[2]) || "un",
+      id: "remote-" + index + "-" + Date.now(),
+      description: desc,
+      quantity: row[1] || 0,
+      unit: String(row[2]) || "",
       brand: String(row[3]) || "",
-      price: parseFloat(row[4]) || 0,
+      price: row[4] || 0,
       completed: String(row[6]).toUpperCase() === "OK",
       note: String(row[7]) || ""
     };
-  }).filter(item => item !== null);
+  }).filter(i => i !== null);
 
-  const result = {
-    name: listName,
-    items: items,
-    updatedAt: Date.now()
-  };
-
-  return ContentService.createTextOutput(JSON.stringify(result))
+  return ContentService.createTextOutput(JSON.stringify({name: listName, items: items}))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
   try {
-    const data = JSON.parse(e.postData.contents);
-    return processarDados(data);
+    const payload = JSON.parse(e.postData.contents);
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    // Limpeza Profunda controlada
+    if (sheet.getLastRow() > 1) {
+      sheet.getRange(2, 1, Math.max(sheet.getLastRow(), 2), 8).clearContent().clearFormat();
+    }
+    
+    // Cabeçalhos (Linha 1)
+    sheet.getRange(1, 1, 1, 8).setValues([["ITEM", "QTD", "UNID", "MARCA", "PREÇO UN", "TOTAL", "STATUS", "OBSERVAÇÕES"]])
+         .setBackground("#1e293b").setFontColor("white").setFontWeight("bold");
+
+    if (payload.items && payload.items.length > 0) {
+      const rows = payload.items.map(item => [
+        item.description,
+        item.quantity || "",
+        item.unit || "",
+        item.brand || "",
+        item.price || "",
+        (item.quantity && item.price) ? (item.quantity * item.price) : "",
+        item.description.includes("[SEÇÃO]") ? "DIVISÃO" : (item.completed ? "OK" : "PENDENTE"),
+        item.note || ""
+      ]);
+      
+      sheet.getRange(2, 1, rows.length, 8).setValues(rows);
+      
+      // Formatação Visual
+      for (let i = 0; i < rows.length; i++) {
+        const rowNum = i + 2;
+        const text = String(rows[i][0]);
+        
+        if (text.includes("[SEÇÃO]")) {
+          sheet.getRange(rowNum, 1, 1, 8)
+               .setBackground("#334155")
+               .setFontColor("#ffffff")
+               .setFontWeight("bold")
+               .setHorizontalAlignment("center");
+        } else if (rows[i][6] === "OK") {
+          sheet.getRange(rowNum, 1, 1, 8).setFontColor("#cbd5e1").setFontLine("line-through");
+        }
+      }
+      sheet.getRange(2, 5, rows.length, 2).setNumberFormat("R$ #,##0.00");
+    }
+    
+    sheet.setFrozenRows(1);
+    sheet.autoResizeColumns(1, 8);
+    
+    return ContentService.createTextOutput("Sincronizado v8.0").setMimeType(ContentService.MimeType.TEXT);
   } catch (err) {
     return ContentService.createTextOutput("Erro: " + err.message).setMimeType(ContentService.MimeType.TEXT);
   }
-}
-
-function processarDados(payload) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  
-  // 1. Salva o nome da lista na A1 (opcional, para organização)
-  // sheet.getRange("A1").setValue(payload.name);
-
-  // 2. Limpa dados antigos (A2 em diante)
-  if (sheet.getLastRow() > 1) {
-    sheet.getRange(2, 1, sheet.getLastRow(), 8).clear();
-  }
-  
-  // Cabeçalhos (Sempre garante que existam)
-  const headers = [["ITEM", "QTD", "UNID", "MARCA", "PREÇO UN", "TOTAL", "STATUS", "OBSERVAÇÕES"]];
-  sheet.getRange(1, 1, 1, 8).setValues(headers)
-    .setBackground("#059669").setFontColor("white").setFontWeight("bold").setHorizontalAlignment("center");
-
-  if (payload.items && payload.items.length > 0) {
-    const rows = payload.items.map(item => {
-      const preco = parseFloat(item.price) || 0;
-      const qtd = parseFloat(item.quantity) || 0;
-      return [
-        item.description,
-        qtd,
-        item.unit,
-        item.brand || "",
-        preco,
-        (qtd * preco),
-        item.completed ? "OK" : "PENDENTE",
-        item.note || ""
-      ];
-    });
-    
-    sheet.getRange(2, 1, rows.length, 8).setValues(rows);
-    
-    // Formatação
-    for (var i = 0; i < rows.length; i++) {
-      const row = i + 2;
-      if (rows[i][6] === "OK") {
-        sheet.getRange(row, 1, 1, 8).setBackground("#ecfdf5").setFontColor("#9ca3af");
-        sheet.getRange(row, 1).setFontLine("line-through");
-      } else {
-        sheet.getRange(row, 1, 1, 8).setBackground("white").setFontColor("black").setFontLine("none");
-      }
-    }
-    sheet.getRange(2, 5, rows.length, 2).setNumberFormat("R$ #,##0.00");
-  }
-
-  sheet.setFrozenRows(1);
-  sheet.autoResizeColumns(1, 8);
-  
-  return ContentService.createTextOutput("Sincronizado!").setMimeType(ContentService.MimeType.TEXT);
 }
 `;
 
@@ -122,64 +107,51 @@ function processarDados(payload) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md animate-fade-in text-left">
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="p-6 border-b flex justify-between items-center bg-emerald-600 text-white shadow-lg">
+        <div className="p-6 border-b flex justify-between items-center bg-[#1e293b] text-white">
           <div className="flex items-center gap-3">
-            <div className="bg-white/20 p-2 rounded-xl">
-              <Zap size={24} />
-            </div>
+            <Zap size={24} className="text-accent" />
             <div>
-              <h2 className="text-xl font-bold">Planilha ↔ App (Sincronia Total)</h2>
-              <p className="text-emerald-100 text-xs">O que você mudar na planilha, muda no app!</p>
+              <h2 className="text-xl font-bold">Script de Sincronia v8.0</h2>
+              <p className="text-[10px] text-slate-400 uppercase tracking-widest font-black">Sistema Garcez Heredia</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-            <X size={24} />
-          </button>
+          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors"><X size={24} /></button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          <section className="bg-blue-50 border border-blue-100 p-4 rounded-2xl">
-             <h4 className="text-blue-700 font-bold text-sm mb-1">Atenção!</h4>
-             <p className="text-[11px] text-blue-800 leading-relaxed">
-                Este script foi atualizado para ler o conteúdo das células. Se você apagar uma linha na planilha, o app também apagará o item. Se mudar um preço no Excel, o app atualizará o valor.
+          <div className="bg-amber-50 border border-amber-200 p-5 rounded-2xl">
+             <h4 className="text-amber-800 font-black text-xs mb-2 uppercase tracking-widest">Procedimento de Resgate</h4>
+             <p className="text-[11px] text-amber-900 leading-relaxed font-bold">
+                Como a planilha foi limpa, siga estes passos:<br/><br/>
+                1. Atualize o código no Google com o v8.0 abaixo.<br/>
+                2. No App, dentro da lista, use o menu <span className="text-blue-600 font-black">"Mesclar JSON"</span> para subir seu backup.<br/>
+                3. O App enviará automaticamente os dados de volta para a planilha.<br/>
+                4. <span className="text-amber-600 font-black">Nova URL:</span> Se você mudou de script, atualize o link nas "Preferências" do Dashboard.
              </p>
-          </section>
+          </div>
 
-          <section className="space-y-3">
+          <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <h3 className="flex items-center gap-2 font-bold text-gray-800">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-xs">1</span>
-                Copie o Novo Código
-              </h3>
+              <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Código v8.0 (Resgate)</span>
               <button 
                 onClick={handleCopy}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black transition-all shadow-sm ${
-                  copied ? 'bg-emerald-500 text-white' : 'bg-gray-900 text-white hover:bg-gray-800'
+                className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-xs font-black transition-all shadow-lg ${
+                  copied ? 'bg-emerald-500 text-white' : 'bg-slate-900 text-white active:scale-95'
                 }`}
               >
-                {copied ? <Check size={14} /> : <Code size={14} />}
-                {copied ? 'Copiado!' : 'Copiar Script'}
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+                {copied ? 'Copiado!' : 'Copiar Código'}
               </button>
             </div>
-            <pre className="bg-gray-900 text-emerald-400 p-5 rounded-2xl text-[10px] font-mono overflow-x-auto max-h-48 border-4 border-gray-800 shadow-inner">
+            <pre className="bg-slate-900 text-emerald-400 p-6 rounded-2xl text-[10px] font-mono overflow-x-auto max-h-64 border-2 border-slate-800 shadow-inner">
                 {scriptCode}
             </pre>
-          </section>
-
-          <section className="bg-amber-50 p-5 rounded-2xl border border-amber-100 space-y-4">
-            <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
-                <Info size={16} className="text-amber-600" />
-                Lembrete de Atualização:
-            </h3>
-            <p className="text-xs text-amber-800 font-medium leading-relaxed">
-                Para o novo script funcionar, você deve ir no Google Apps Script, colar este código sobre o antigo e clicar em <b>"Implantar {" > "} Gerenciar Implantações"</b>, editar a atual e selecionar <b>"Nova Versão"</b>. Caso contrário, ele continuará usando o script antigo.
-            </p>
-          </section>
+          </div>
         </div>
 
-        <div className="p-6 border-t bg-gray-50">
-          <button onClick={onClose} className="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold shadow-lg text-sm">
-            Entendido, Script Atualizado!
+        <div className="p-6 border-t bg-slate-50">
+          <button onClick={onClose} className="w-full bg-accent text-white py-5 rounded-2xl font-black shadow-lg text-sm uppercase tracking-widest active:scale-95 transition-all">
+            Feito! Código Atualizado.
           </button>
         </div>
       </div>
