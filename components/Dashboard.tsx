@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ShoppingList } from '../types';
-import { Plus, ShoppingBag, Smartphone, X, Check, Settings, Download, Upload, Database, ArrowRight, Star, CloudOff, Cloud, FileSpreadsheet } from 'lucide-react';
+import { Plus, ShoppingBag, Smartphone, X, Check, Settings, Download, Upload, Database, ArrowRight, CloudOff, Cloud, FileSpreadsheet } from 'lucide-react';
 import { FIXED_LIST_ID } from '../hooks/useLocalStorage';
 
 // Nova URL fornecida pelo usuário
@@ -49,7 +49,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     setSyncEnabled(true);
   };
 
-  const sortedLists = [...lists].sort((a, b) => {
+  const sortedLists = [...lists].sort((a: ShoppingList, b: ShoppingList) => {
     if (a.id === FIXED_LIST_ID) return -1;
     if (b.id === FIXED_LIST_ID) return 1;
     return b.updatedAt - a.updatedAt;
@@ -127,7 +127,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
           
           <div className="grid gap-6">
-              {sortedLists.map((list) => {
+              {sortedLists.map((list: ShoppingList) => {
                   const isFixed = list.id === FIXED_LIST_ID;
                   const isLocal = !!list.syncDisabled;
                   return (
@@ -202,7 +202,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                             <Upload className="text-[#0a3d4a]" />
                             <span className="font-black text-[10px] uppercase">Importar JSON</span>
                         </button>
-                        <input type="file" ref={fileInputRef} onChange={(event) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const content = e.target?.result as string; const importedData = JSON.parse(content); onRestoreBackup(Array.isArray(importedData) ? importedData : [importedData]); setShowSettings(false); } catch (err) { alert("Erro ao ler o arquivo."); } }; reader.readAsText(file); if (fileInputRef.current) fileInputRef.current.value = ''; }} accept=".json" className="hidden" />
+                        <input type="file" ref={fileInputRef} onChange={(event: React.ChangeEvent<HTMLInputElement>) => { const file = event.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const content = e.target?.result as string; const importedData = JSON.parse(content); onRestoreBackup(Array.isArray(importedData) ? importedData : [importedData]); setShowSettings(false); } catch (err) { alert("Erro ao ler o arquivo."); } }; reader.readAsText(file); if (fileInputRef.current) fileInputRef.current.value = ''; }} accept=".json" className="hidden" />
                     </div>
                 </div>
                 <button onClick={() => setShowSettings(false)} className="w-full bg-[#0a3d4a] text-white py-5 rounded-2xl font-black mt-10 shadow-xl">Confirmar</button>

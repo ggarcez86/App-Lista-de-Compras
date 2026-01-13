@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ShoppingList, ShoppingItem, SortOption } from '../types';
-import { ArrowLeft, Trash2, Plus, Settings, Check, FileText, Upload, Eraser, ShoppingBag, Tag, Info, DollarSign, X, SortAsc, ListFilter, List, ChevronUp, ChevronDown, LayoutGrid, RefreshCw, Share2, FileJson } from 'lucide-react';
+import { ArrowLeft, Trash2, Plus, Settings, Check, FileText, Upload, Eraser, ShoppingBag, Tag, Info, DollarSign, X, SortAsc, List, ChevronUp, ChevronDown, LayoutGrid, RefreshCw, Share2, FileJson } from 'lucide-react';
 import { parseItemText } from '../utils/parser';
 import { ImportModal } from './ImportModal';
 import { ShareModal } from './ShareModal';
@@ -61,7 +61,7 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
   const silentPush = async (currentList: ShoppingList) => {
     if (syncDisabled || !sheetsUrl || !sheetsUrl.includes('/exec')) return;
     setLastPushStatus('syncing');
-    const itemsForSync = currentList.items.map(item => ({
+    const itemsForSync = currentList.items.map((item: ShoppingItem) => ({
         ...item,
         description: item.isSection ? `[SEÇÃO] ${item.description}` : item.description
     }));
@@ -91,7 +91,7 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
         const response = await fetch(`${sheetsUrl}?t=${Date.now()}`);
         const remoteData = await response.json();
         if (remoteData && Array.isArray(remoteData.items)) {
-            const normalizedRemote = remoteData.items.map((ri: any, idx: number) => {
+            const normalizedRemote: ShoppingItem[] = remoteData.items.map((ri: any, idx: number) => {
                 const desc = String(ri.description || ri.item || "");
                 const isSec = desc.includes('[SEÇÃO]');
                 return {
@@ -106,16 +106,15 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
                     isSection: isSec
                 };
             });
-            const remoteHasSections = normalizedRemote.some(i => i.isSection);
-            const localHasSections = list.items.some(i => i.isSection);
+            const remoteHasSections = normalizedRemote.some((i: ShoppingItem) => i.isSection);
+            const localHasSections = list.items.some((i: ShoppingItem) => i.isSection);
             if (isFixed && localHasSections && !remoteHasSections) {
                 await silentPush(list);
                 setIsSyncing(false);
                 return;
             }
-            // TIPAGEM EXPLÍCITA PARA FIX DO ERRO VERCEL
             const localSig = JSON.stringify(list.items.map((i: ShoppingItem) => ({d: i.description, c: i.completed, q: i.quantity})));
-            const remoteSig = JSON.stringify(normalizedRemote.map((i: any) => ({d: i.description, c: i.completed, q: i.quantity})));
+            const remoteSig = JSON.stringify(normalizedRemote.map((i: ShoppingItem) => ({d: i.description, c: i.completed, q: i.quantity})));
             if (localSig !== remoteSig) {
                 onUpdate({ ...list, items: normalizedRemote, updatedAt: Date.now() });
             }
@@ -180,7 +179,7 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
                 const isSec = !!(item.isSection || item.s || desc.includes("[SEÇÃO]"));
                 const cleanDesc = isSec ? desc.replace('[SEÇÃO]', '').trim() : desc;
 
-                if (isSec && currentItems.some(i => i.isSection && i.description.trim() === cleanDesc)) return;
+                if (isSec && currentItems.some((i: ShoppingItem) => i.isSection && i.description.trim() === cleanDesc)) return;
 
                 newProcessedItems.push({
                     id: crypto.randomUUID(),
@@ -197,8 +196,8 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
 
             if (isFixed) {
                 const merged = [...currentItems];
-                newProcessedItems.forEach(ni => {
-                    const exists = merged.find(mi => mi.description === ni.description && mi.isSection === ni.isSection);
+                newProcessedItems.forEach((ni: ShoppingItem) => {
+                    const exists = merged.find((mi: ShoppingItem) => mi.description === ni.description && mi.isSection === ni.isSection);
                     if (exists) {
                         Object.assign(exists, { ...ni, id: exists.id });
                     } else {
@@ -234,19 +233,19 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
   };
 
   const toggleItem = (itemId: string) => {
-    if (list.items.find(i => i.id === itemId)?.isSection) return; 
-    const updatedItems = list.items.map((item) => item.id === itemId ? { ...item, completed: !item.completed } : item);
+    if (list.items.find((i: ShoppingItem) => i.id === itemId)?.isSection) return; 
+    const updatedItems = list.items.map((item: ShoppingItem) => item.id === itemId ? { ...item, completed: !item.completed } : item);
     handleAction(updatedItems);
   };
 
   const updateItem = (itemId: string, updates: Partial<ShoppingItem>) => {
-    const updatedItems = list.items.map((item) => item.id === itemId ? { ...item, ...updates } : item);
+    const updatedItems = list.items.map((item: ShoppingItem) => item.id === itemId ? { ...item, ...updates } : item);
     if (editingItem && editingItem.id === itemId) setEditingItem({ ...editingItem, ...updates });
     handleAction(updatedItems);
   };
 
   const deleteItem = (itemId: string) => {
-    const updatedItems = list.items.filter((item) => item.id !== itemId);
+    const updatedItems = list.items.filter((item: ShoppingItem) => item.id !== itemId);
     handleAction(updatedItems);
     setEditingItem(null);
   };
@@ -269,14 +268,14 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
   const sortedItems = useMemo(() => {
     let items = [...list.items];
     if (sortBy === 'alphabetical') {
-      return items.sort((a, b) => {
+      return items.sort((a: ShoppingItem, b: ShoppingItem) => {
           if (a.isSection && !b.isSection) return -1;
           if (!a.isSection && b.isSection) return 1;
           return a.description.localeCompare(b.description, 'pt-BR');
       });
     }
     if (sortBy === 'status') {
-      return items.sort((a, b) => {
+      return items.sort((a: ShoppingItem, b: ShoppingItem) => {
           if (a.isSection && !b.isSection) return -1;
           if (!a.isSection && b.isSection) return 1;
           return (a.completed === b.completed ? 0 : a.completed ? 1 : -1);
@@ -285,8 +284,8 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
     return items;
   }, [list.items, sortBy]);
 
-  const totalItems = list.items.filter(i => !i.isSection).length;
-  const completedItems = list.items.filter(i => i.completed && !i.isSection).length;
+  const totalItems = list.items.filter((i: ShoppingItem) => !i.isSection).length;
+  const completedItems = list.items.filter((i: ShoppingItem) => i.completed && !i.isSection).length;
   const progress = totalItems === 0 ? 0 : (completedItems / totalItems) * 100;
 
   return (
@@ -322,7 +321,7 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
                       </div>
                       <div className="py-2">
                           {isFixed ? (
-                            <button onClick={() => { if(confirm("Limpar produtos mantendo as seções?")) { handleAction(list.items.filter(i => i.isSection)); } setIsMenuOpen(false); }} className="w-full text-left px-4 py-3 text-sm text-[#0a3d4a] font-black hover:bg-teal-50 rounded-xl flex items-center gap-3 transition-colors"><Eraser size={16} /> Resetar Mensal</button>
+                            <button onClick={() => { if(confirm("Limpar produtos mantendo as seções?")) { handleAction(list.items.filter((i: ShoppingItem) => i.isSection)); } setIsMenuOpen(false); }} className="w-full text-left px-4 py-3 text-sm text-[#0a3d4a] font-black hover:bg-teal-50 rounded-xl flex items-center gap-3 transition-colors"><Eraser size={16} /> Resetar Mensal</button>
                           ) : (
                             <button onClick={() => { if(confirm("Deseja excluir esta coleção permanentemente?")) { onDeleteList(); } }} className="w-full text-left px-4 py-3 text-sm text-red-600 font-black hover:bg-red-50 rounded-xl flex items-center gap-3 transition-colors"><Trash2 size={16} /> Excluir Coleção</button>
                           )}
@@ -346,7 +345,7 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
           </div>
         ) : (
           <ul className="space-y-4">
-            {sortedItems.map((item, index) => {
+            {sortedItems.map((item: ShoppingItem, index: number) => {
               if (item.isSection) {
                   return (
                     <li key={item.id} className="pt-3 pb-0.5">
@@ -437,7 +436,7 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
             </div>
         </div>
       )}
-      {showTextImportModal && <ImportModal onClose={() => setShowTextImportModal(false)} onImport={(items) => { handleAction([...list.items, ...items]); setShowTextImportModal(false); }} isMergeMode={true} />}
+      {showTextImportModal && <ImportModal onClose={() => setShowTextImportModal(false)} onImport={(items: ShoppingItem[]) => { handleAction([...list.items, ...items]); setShowTextImportModal(false); }} isMergeMode={true} />}
       {showShareModal && <ShareModal listName={list.name} onClose={() => setShowShareModal(false)} />}
     </div>
   );
