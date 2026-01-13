@@ -9,15 +9,15 @@ import { FIXED_LIST_ID } from '../hooks/useLocalStorage';
 const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycby5cYTDF49bQzIkw8onpC4DSVWiQqSWm2pYcgBWb_xZH9DLwc0tTolLXOgJ4dmADU5FNA/exec';
 
 const SECTION_COLORS: Record<string, string> = {
-  "Mercearia": "bg-blue-600",
-  "Bebidas": "bg-sky-500",
-  "Higiene e Limpeza": "bg-purple-500",
-  "Hortifrúti": "bg-emerald-500",
-  "Padaria": "bg-amber-500",
-  "Frios e Laticínios": "bg-yellow-500",
-  "Açougue": "bg-red-500",
-  "Congelados": "bg-cyan-500",
-  "Outras": "bg-slate-500"
+  "Mercearia": "bg-[#0a3d4a]",
+  "Bebidas": "bg-[#164e63]",
+  "Higiene e Limpeza": "bg-[#334155]",
+  "Hortifrúti": "bg-[#065f46]",
+  "Padaria": "bg-[#0f766e]",
+  "Frios e Laticínios": "bg-[#115e59]",
+  "Açougue": "bg-[#450a0a]",
+  "Congelados": "bg-[#155e75]",
+  "Outras": "bg-slate-600"
 };
 
 interface ListViewProps {
@@ -113,7 +113,8 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
                 setIsSyncing(false);
                 return;
             }
-            const localSig = JSON.stringify(list.items.map(i => ({d: i.description, c: i.completed, q: i.quantity})));
+            // TIPAGEM EXPLÍCITA PARA FIX DO ERRO VERCEL
+            const localSig = JSON.stringify(list.items.map((i: ShoppingItem) => ({d: i.description, c: i.completed, q: i.quantity})));
             const remoteSig = JSON.stringify(normalizedRemote.map((i: any) => ({d: i.description, c: i.completed, q: i.quantity})));
             if (localSig !== remoteSig) {
                 onUpdate({ ...list, items: normalizedRemote, updatedAt: Date.now() });
@@ -159,7 +160,7 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
         let rawItems: any[] = [];
         if (Array.isArray(importedData)) {
             if (importedData.length > 0 && (importedData[0].items || importedData[0].i)) {
-                const matchingList = importedData.find(l => l.name === list.name || l.n === list.name) || importedData[0];
+                const matchingList = importedData.find((l: any) => (l.name || l.n) === list.name) || importedData[0];
                 rawItems = matchingList.items || matchingList.i || [];
             } else {
                 rawItems = importedData;
@@ -348,12 +349,12 @@ export const ListView: React.FC<ListViewProps> = ({ list, onUpdate, onBack, onDe
             {sortedItems.map((item, index) => {
               if (item.isSection) {
                   return (
-                    <li key={item.id} className="pt-4 pb-1">
-                        <div className={`flex items-center gap-4 rounded-2xl py-3 px-6 shadow-md ${SECTION_COLORS[item.description] || 'bg-slate-500'} bg-gradient-to-r from-black/20 to-transparent backdrop-blur-sm text-white border border-white/10 transition-all active:scale-[0.99]`}>
-                            <div className="h-8 w-8 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md shrink-0">
-                                <LayoutGrid size={18} />
+                    <li key={item.id} className="pt-3 pb-0.5">
+                        <div className={`flex items-center gap-4 rounded-xl py-2 px-5 shadow-sm ${SECTION_COLORS[item.description] || 'bg-slate-600'} bg-gradient-to-r from-black/10 to-transparent backdrop-blur-sm text-white border border-white/5 transition-all active:scale-[0.99]`}>
+                            <div className="h-7 w-7 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-md shrink-0">
+                                <LayoutGrid size={14} />
                             </div>
-                            <h4 className="text-sm font-heading font-black uppercase tracking-widest">{item.description}</h4>
+                            <h4 className="text-xs font-heading font-black uppercase tracking-widest">{item.description}</h4>
                         </div>
                     </li>
                   );

@@ -1,16 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ShoppingList } from '../types';
-import { Plus, ShoppingBag, Smartphone, X, Check, Settings, Download, Upload, Database, Code, ArrowRight, Star, CloudOff, Cloud, ShieldCheck, FileSpreadsheet } from 'lucide-react';
-import { ShareModal } from './ShareModal';
+import { Plus, ShoppingBag, Smartphone, X, Check, Settings, Download, Upload, Database, ArrowRight, Star, CloudOff, Cloud, FileSpreadsheet } from 'lucide-react';
 import { FIXED_LIST_ID } from '../hooks/useLocalStorage';
 
 // Nova URL fornecida pelo usuário
 const DEFAULT_SHEETS_URL = 'https://script.google.com/macros/s/AKfycby5cYTDF49bQzIkw8onpC4DSVWiQqSWm2pYcgBWb_xZH9DLwc0tTolLXOgJ4dmADU5FNA/exec';
 const MASTER_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1Syi4iWiSR5-XCPkW4xSyZwcwQ_PvsykAf_FnUhX2Po4/edit?usp=sharing';
-
-// Cor Petróleo Elegante
-const PETROLEO_COLOR = '#0a3d4a';
-const PETROLEO_LIGHT = '#e6f0f2';
 
 interface DashboardProps {
   lists: ShoppingList[];
@@ -144,7 +139,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <div className="px-6 py-9 sm:px-10 flex justify-between items-center text-left gap-4">
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-3 mb-2 overflow-hidden">
-                                    <h3 className={`font-heading font-black text-xl sm:text-3xl tracking-tight transition-colors leading-tight whitespace-nowrap overflow-hidden text-ellipsis ${isFixed ? 'text-[#0a3d4a]' : 'text-slate-800 group-hover:text-accent'}`}>
+                                    <h3 className={`font-heading font-black text-xl sm:text-2xl tracking-tight transition-colors leading-tight whitespace-nowrap overflow-hidden text-ellipsis ${isFixed ? 'text-[#0a3d4a]' : 'text-slate-800 group-hover:text-accent'}`}>
                                         {list.name}
                                     </h3>
                                 </div>
@@ -199,7 +194,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-4 border-t pt-8">
-                        <button onClick={() => { const listsToExport = lists; const dataStr = JSON.stringify(listsToExport, null, 2); const dataBlob = new Blob([dataStr], { type: 'application/json' }); const url = URL.createObjectURL(dataBlob); const link = document.createElement('a'); link.href = url; link.download = `backup_garcez_heredia_${new Date().toISOString().split('T')[0]}.json`; link.click(); URL.revokeObjectURL(url); }} className="flex flex-col items-center gap-3 rounded-2xl border p-5 bg-white active:scale-95 shadow-sm">
+                        <button onClick={() => { const dataStr = JSON.stringify(lists, null, 2); const dataBlob = new Blob([dataStr], { type: 'application/json' }); const url = URL.createObjectURL(dataBlob); const link = document.createElement('a'); link.href = url; link.download = `backup_garcez_heredia_${new Date().toISOString().split('T')[0]}.json`; link.click(); URL.revokeObjectURL(url); }} className="flex flex-col items-center gap-3 rounded-2xl border p-5 bg-white active:scale-95 shadow-sm">
                             <Download className="text-blue-500" />
                             <span className="font-black text-[10px] uppercase">Exportar</span>
                         </button>
